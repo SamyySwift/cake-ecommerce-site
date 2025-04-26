@@ -134,7 +134,7 @@ const ProductForm = ({ initialProduct, onSuccess }: ProductFormProps) => {
         category: product.category,
         image_url: imageUrl,
         flavors: flavors,
-        sizes: formattedSizes,
+        sizes: sizes, // Just pass the sizes array directly
         bestseller: product.bestseller || false,
         newArrival: product.newArrival || false,
         sameDay: product.sameDay || false

@@ -14,8 +14,6 @@ const Navigation = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Remove console.log and use useAdmin hook
-  const isAdmin = user?.is_admin;
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -46,7 +44,7 @@ const Navigation = () => {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="text-2xl md:text-3xl font-bold text-primary">
-          Sweet Delights
+          Fikayo's Delights
         </Link>
 
         {/* Desktop Navigation */}
