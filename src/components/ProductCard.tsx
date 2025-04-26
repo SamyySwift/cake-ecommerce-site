@@ -70,7 +70,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           </Button>
         </div>
         <img
-          src={product.image}
+          src={product.image_url || '/placeholder.svg'}
           alt={product.name}
           className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
         />

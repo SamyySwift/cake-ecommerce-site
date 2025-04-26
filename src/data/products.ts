@@ -3,8 +3,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  image?: string;
-  image_url?: string;
+  image_url: string | null;  // Use this instead of 'image'
   category: string;
   flavors: string[];
   sizes: {
@@ -26,7 +25,7 @@ export const products: Product[] = [
     name: "Classic Chocolate Cake",
     description: "Rich, moist chocolate cake with a smooth chocolate ganache frosting. Perfect for any celebration.",
     price: 45.99,
-    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1089&q=80",
+    image_url: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1089&q=80",
     category: "Birthday",
     flavors: ["Chocolate", "Dark Chocolate", "Milk Chocolate"],
     sizes: [
@@ -45,7 +44,7 @@ export const products: Product[] = [
     name: "Red Velvet Dream",
     description: "Velvety smooth red cake with cream cheese frosting. A timeless classic that everyone loves.",
     price: 49.99,
-    image: "https://images.unsplash.com/photo-1616541823729-00fe0aacd32c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1114&q=80",
+    image_url: "https://images.unsplash.com/photo-1616541823729-00fe0aacd32c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1114&q=80",
     category: "Birthday",
     flavors: ["Red Velvet"],
     sizes: [
@@ -64,7 +63,7 @@ export const products: Product[] = [
     name: "Wedding Elegance",
     description: "Multi-tiered vanilla cake with buttercream frosting and delicate floral decorations. Perfect for your special day.",
     price: 299.99,
-    image: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    image_url: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
     category: "Wedding",
     flavors: ["Vanilla", "Strawberry", "Chocolate"],
     sizes: [
@@ -83,7 +82,7 @@ export const products: Product[] = [
     name: "Berry Cheesecake",
     description: "Creamy cheesecake topped with a mixed berry compote. A perfect balance of sweet and tangy.",
     price: 39.99,
-    image: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    image_url: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
     category: "Cheesecake",
     flavors: ["Berry", "Mixed Berry"],
     sizes: [
@@ -101,7 +100,7 @@ export const products: Product[] = [
     name: "Assorted Cupcake Box",
     description: "A delightful assortment of 12 cupcakes in various flavors. Perfect for sharing.",
     price: 34.99,
-    image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1087&q=80",
+    image_url: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1087&q=80",
     category: "Cupcakes",
     flavors: ["Assorted", "Vanilla", "Chocolate", "Red Velvet", "Lemon"],
     sizes: [
@@ -120,7 +119,7 @@ export const products: Product[] = [
     name: "Strawberry Shortcake",
     description: "Light vanilla sponge with layers of fresh strawberries and whipped cream. A summer favorite!",
     price: 42.99,
-    image: "https://images.unsplash.com/photo-1565808229224-264b6fcc5052?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+    image_url: "https://images.unsplash.com/photo-1565808229224-264b6fcc5052?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
     category: "Birthday",
     flavors: ["Strawberry", "Vanilla"],
     sizes: [
@@ -139,7 +138,7 @@ export const products: Product[] = [
     name: "Tiramisu Delight",
     description: "Classic Italian dessert with layers of coffee-soaked ladyfingers and mascarpone cream.",
     price: 46.99,
-    image: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1025&q=80",
+    image_url: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1025&q=80",
     category: "Specialty",
     flavors: ["Coffee", "Mascarpone"],
     sizes: [
@@ -157,7 +156,7 @@ export const products: Product[] = [
     name: "Lemon Drizzle",
     description: "Zesty lemon cake with a tangy lemon glaze. Refreshing and perfect for summer.",
     price: 41.99,
-    image: "https://images.unsplash.com/photo-1530648672449-81f6c723e2f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1089&q=80",
+    image_url: "https://images.unsplash.com/photo-1530648672449-81f6c723e2f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1089&q=80",
     category: "Birthday",
     flavors: ["Lemon"],
     sizes: [

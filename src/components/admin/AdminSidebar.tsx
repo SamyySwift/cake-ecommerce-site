@@ -17,10 +17,10 @@ const AdminSidebar = () => {
           Dashboard
         </Link>
         <Link to="/admin/products" className="block p-2 hover:bg-gray-200 rounded">
-          Products
+          Manage Products
         </Link>
         <Link to="/admin/orders" className="block p-2 hover:bg-gray-200 rounded">
-          Orders
+          Manage Orders
         </Link>
       </nav>
     </aside>

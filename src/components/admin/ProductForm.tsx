@@ -28,7 +28,7 @@ const ProductForm = ({ initialProduct, onSuccess }: ProductFormProps) => {
       description: '',
       price: 0,
       category: '',
-      image_url: '',
+      image_url: '', // Note: it's image_url, not image
       flavors: [],
       sizes: [],
       bestseller: false,
@@ -124,12 +124,20 @@ const ProductForm = ({ initialProduct, onSuccess }: ProductFormProps) => {
         imageUrl = await uploadImage();
       }
       
+      // Convert sizes to JSONB array format
+      const formattedSizes = sizes.map(size => JSON.stringify(size));
+      
       const productData = {
-        ...product,
-        flavors,
-        sizes,
+        name: product.name,
+        description: product.description,
+        price: product.price || 0,
+        category: product.category,
         image_url: imageUrl,
-        price: product.price || 0
+        flavors: flavors,
+        sizes: formattedSizes,
+        bestseller: product.bestseller || false,
+        newArrival: product.newArrival || false,
+        sameDay: product.sameDay || false
       };
       
       if (initialProduct) {

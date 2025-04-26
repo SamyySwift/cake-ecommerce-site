@@ -8,7 +8,7 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="relative h-[80vh] md:h-[90vh] bg-cake-pink">
+    <div className="relative h-screen bg-cake-pink">
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-r from-cake-pink via-white/20 to-transparent z-10"></div>
         <img
@@ -23,7 +23,7 @@ const HeroSection = () => {
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
           >
             Handcrafted Cakes for Every Occasion
           </motion.h1>
@@ -31,7 +31,7 @@ const HeroSection = () => {
             className="text-lg md:text-xl mb-8 text-foreground/80"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
           >
             Made with love and the finest ingredients. Order online for delivery or pickup.
           </motion.p>
@@ -39,7 +39,7 @@ const HeroSection = () => {
             className="flex space-x-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
             <Button 
               className="cake-button"
