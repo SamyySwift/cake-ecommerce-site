@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
@@ -13,7 +12,6 @@ const normalizeProduct = (product: ProductRow): Product => {
     name: product.name,
     description: product.description || "",
     price: product.price,
-    image: product.image_url || "",
     image_url: product.image_url,
     category: product.category || "",
     flavors: product.flavors || [],
@@ -39,10 +37,17 @@ export const useProducts = (category?: string) => {
       }
       
       const { data, error } = await query;
+     
       
       if (error) throw error;
+      if (!data || data.length === 0) return [];
+      
+      console.log('Fetched products:', data.length);
       return data.map(normalizeProduct) as Product[];
-    }
+    },
+    // Add staleTime and refetchOnMount to ensure fresh data
+    staleTime: 1000 * 60, // 1 minute
+    refetchOnMount: true
   });
 };
 

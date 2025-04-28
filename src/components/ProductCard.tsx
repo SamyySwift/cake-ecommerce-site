@@ -75,12 +75,10 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          
           <Button 
             className="w-full rounded-full bg-white text-foreground hover:bg-white/90 flex items-center justify-center"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Add to cart logic here
-            }}
+            
           >
             <ShoppingBag size={16} className="mr-2" /> Add to Cart
           </Button>
@@ -95,7 +93,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           </div>
           <span className="text-sm text-muted-foreground ml-2">({product.reviews})</span>
         </div>
-        <div className="mt-2 font-semibold">${product.price.toFixed(2)}</div>
+        <div className="mt-2 font-semibold">₦{product.price.toFixed(2)}</div>
         {product.sameDay && (
           <div className="mt-2 text-sm text-green-600">Available for Same-day Delivery</div>
         )}

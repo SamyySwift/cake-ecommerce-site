@@ -1,95 +1,71 @@
-
 import React, { useState, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useProducts, getUniqueCategories, getUniqueFlavors } from '@/hooks/useProducts';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
-import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useProducts, getUniqueCategories, getUniqueFlavors } from '@/hooks/useProducts';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const Shop = () => {
-  const [searchParams] = useSearchParams();
-  const categoryParam = searchParams.get('category');
-  const filterParam = searchParams.get('filter');
-
-  // Filter states
-  const [priceRange, setPriceRange] = useState([0, 100]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    categoryParam ? [categoryParam] : []
-  );
-  const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
-  const [selectedDelivery, setSelectedDelivery] = useState<string[]>([]);
-
   const { data: products = [], isLoading } = useProducts();
-  
-  // Get unique categories and flavors from products
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
+  const [minPrice, setMinPrice] = useState<number | undefined>();
+  const [maxPrice, setMaxPrice] = useState<number | undefined>();
+
   const categories = useMemo(() => getUniqueCategories(products), [products]);
   const flavors = useMemo(() => getUniqueFlavors(products), [products]);
-  
-  // Filter products
+
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
-    
-    if (filterParam === 'bestsellers') {
-      filtered = filtered.filter(product => product.bestseller);
-    } else if (filterParam === 'new') {
-      filtered = filtered.filter(product => product.newArrival);
-    }
-    
+
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter(product => 
+      filtered = filtered.filter(product =>
         selectedCategories.includes(product.category)
       );
     }
-    
+
     if (selectedFlavors.length > 0) {
-      filtered = filtered.filter(product => 
-        product.flavors && product.flavors.some(flavor => selectedFlavors.includes(flavor))
+      filtered = filtered.filter(product =>
+        product.flavors &&
+        product.flavors.some(flavor => selectedFlavors.includes(flavor))
       );
     }
-    
-    if (selectedDelivery.includes('Same-day')) {
-      filtered = filtered.filter(product => product.sameDay);
+
+    if (minPrice !== undefined) {
+      filtered = filtered.filter(product => product.price >= minPrice);
     }
-    
-    filtered = filtered.filter(product => 
-      product.price >= priceRange[0] && product.price <= priceRange[1] * 10
-    );
+
+    if (maxPrice !== undefined) {
+      filtered = filtered.filter(product => product.price <= maxPrice);
+    }
 
     return filtered;
-  }, [products, filterParam, selectedCategories, selectedFlavors, selectedDelivery, priceRange]);
+  }, [products, selectedCategories, selectedFlavors, minPrice, maxPrice]);
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) 
+    setSelectedCategories(prev =>
+      prev.includes(category)
         ? prev.filter(item => item !== category)
         : [...prev, category]
     );
   };
 
   const handleFlavorChange = (flavor: string) => {
-    setSelectedFlavors(prev => 
-      prev.includes(flavor) 
+    setSelectedFlavors(prev =>
+      prev.includes(flavor)
         ? prev.filter(item => item !== flavor)
         : [...prev, flavor]
-    );
-  };
-
-  const handleDeliveryChange = (type: string) => {
-    setSelectedDelivery(prev => 
-      prev.includes(type) 
-        ? prev.filter(item => item !== type)
-        : [...prev, type]
     );
   };
 
   const clearFilters = () => {
     setSelectedCategories([]);
     setSelectedFlavors([]);
-    setSelectedDelivery([]);
-    setPriceRange([0, 100]);
+    setMinPrice(undefined);
+    setMaxPrice(undefined);
   };
 
   return (
@@ -97,7 +73,7 @@ const Shop = () => {
       <Navigation />
       <main className="section-container">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filters Sidebar */}
+          {/* Sidebar Filters */}
           <div className="lg:w-1/4">
             <div className="sticky top-24 space-y-8">
               <div className="flex items-center justify-between">
@@ -106,31 +82,15 @@ const Shop = () => {
                   Clear All
                 </Button>
               </div>
-              
-              {/* Price Range */}
-              <div className="space-y-4">
-                <h3 className="font-semibold">Price Range</h3>
-                <Slider 
-                  value={priceRange} 
-                  onValueChange={setPriceRange} 
-                  min={0} 
-                  max={100} 
-                  step={1} 
-                />
-                <div className="flex justify-between text-sm">
-                  <span>${priceRange[0].toFixed(2)}</span>
-                  <span>${(priceRange[1] * 10).toFixed(2)}</span>
-                </div>
-              </div>
-              
-              {/* Categories */}
+
+              {/* Categories Filter */}
               <div className="space-y-4">
                 <h3 className="font-semibold">Categories</h3>
                 <div className="space-y-2">
                   {categories.map(category => (
                     <div key={category} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`category-${category}`} 
+                      <Checkbox
+                        id={`category-${category}`}
                         checked={selectedCategories.includes(category)}
                         onCheckedChange={() => handleCategoryChange(category)}
                       />
@@ -141,15 +101,15 @@ const Shop = () => {
                   ))}
                 </div>
               </div>
-              
-              {/* Flavors */}
+
+              {/* Flavors Filter */}
               <div className="space-y-4">
                 <h3 className="font-semibold">Flavors</h3>
                 <div className="space-y-2">
                   {flavors.map(flavor => (
                     <div key={flavor} className="flex items-center space-x-2">
-                      <Checkbox 
-                        id={`flavor-${flavor}`} 
+                      <Checkbox
+                        id={`flavor-${flavor}`}
                         checked={selectedFlavors.includes(flavor)}
                         onCheckedChange={() => handleFlavorChange(flavor)}
                       />
@@ -160,37 +120,39 @@ const Shop = () => {
                   ))}
                 </div>
               </div>
-              
-              {/* Delivery */}
+
+              {/* Price Filter */}
               <div className="space-y-4">
-                <h3 className="font-semibold">Delivery Options</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="delivery-same-day" 
-                      checked={selectedDelivery.includes('Same-day')}
-                      onCheckedChange={() => handleDeliveryChange('Same-day')}
-                    />
-                    <label htmlFor="delivery-same-day" className="text-sm cursor-pointer">
-                      Same-day Delivery
-                    </label>
-                  </div>
+                <h3 className="font-semibold">Price</h3>
+                <div className="flex flex-col space-y-2">
+                  <Input
+                    type="number"
+                    placeholder="Min Price"
+                    value={minPrice ?? ''}
+                    onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : undefined)}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Max Price"
+                    value={maxPrice ?? ''}
+                    onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : undefined)}
+                  />
                 </div>
               </div>
             </div>
           </div>
-          
-          {/* Product Grid */}
+
+          {/* Products Grid */}
           <div className="lg:w-3/4">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold">All Cakes</h1>
+              <h1 className="text-2xl font-bold">All Products</h1>
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-muted-foreground">
                   {isLoading ? 'Loading...' : `Showing ${filteredProducts.length} products`}
                 </span>
               </div>
             </div>
-            
+
             {isLoading ? (
               <div className="text-center py-16">
                 <p>Loading products...</p>
@@ -205,15 +167,10 @@ const Shop = () => {
               <div className="text-center py-16">
                 <h3 className="text-xl font-semibold">No products found</h3>
                 <p className="text-muted-foreground mt-2">
-                  Try changing your filters or search criteria
+                  Try changing your selected filters
                 </p>
               </div>
             )}
-            
-            {/* Pagination - For future implementation */}
-            <div className="mt-12 flex justify-center">
-              {/* Placeholder for pagination */}
-            </div>
           </div>
         </div>
       </main>
