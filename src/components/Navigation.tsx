@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingBag, User, Search, Menu, X, LogOut } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,6 +14,7 @@ const Navigation = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const location = useLocation();
   
   useEffect(() => {
     if (user) {
@@ -74,6 +75,11 @@ const Navigation = () => {
     }
   };
 
+  // Function to check if a link is active
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -84,26 +90,63 @@ const Navigation = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <Link to="/" className="font-medium hover:text-primary transition-colors">
+          <Link 
+            to="/" 
+            className={`font-medium hover:text-primary transition-colors relative ${
+              isActive('/') ? 'text-primary' : ''
+            }`}
+          >
             Home
+            {isActive('/') && (
+              <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
+            )}
           </Link>
-          <Link to="/shop" className="font-medium hover:text-primary transition-colors">
+          <Link 
+            to="/shop" 
+            className={`font-medium hover:text-primary transition-colors relative ${
+              isActive('/shop') ? 'text-primary' : ''
+            }`}
+          >
             Shop
+            {isActive('/shop') && (
+              <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
+            )}
           </Link>
-          <Link to="/custom-order" className="font-medium hover:text-primary transition-colors">
+          <Link 
+            to="/custom-order" 
+            className={`font-medium hover:text-primary transition-colors relative ${
+              isActive('/custom-order') ? 'text-primary' : ''
+            }`}
+          >
             Custom Order
+            {isActive('/custom-order') && (
+              <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
+            )}
           </Link>
           {user && (
-            <Link to="/orders" className="font-medium hover:text-primary transition-colors">
+            <Link 
+              to="/orders" 
+              className={`font-medium hover:text-primary transition-colors relative ${
+                isActive('/orders') ? 'text-primary' : ''
+              }`}
+            >
               My Orders
+              {isActive('/orders') && (
+                <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
+              )}
             </Link>
           )}
           {user?.is_admin && (
             <Link 
               to="/admin" 
-              className="font-medium hover:text-primary transition-colors"
+              className={`font-medium hover:text-primary transition-colors relative ${
+                location.pathname.startsWith('/admin') ? 'text-primary' : ''
+              }`}
             >
               Admin Panel
+              {location.pathname.startsWith('/admin') && (
+                <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
+              )}
             </Link>
           )}
         </nav>
@@ -162,29 +205,70 @@ const Navigation = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-background border-t animate-fade-in">
           <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
-            <Link to="/" className="font-medium py-2 hover:text-primary transition-colors" onClick={toggleMobileMenu}>
+            <Link 
+              to="/" 
+              className={`font-medium py-2 hover:text-primary transition-colors relative ${
+                isActive('/') ? 'text-primary' : ''
+              }`} 
+              onClick={toggleMobileMenu}
+            >
               Home
+              {isActive('/') && (
+                <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
+              )}
             </Link>
-            <Link to="/shop" className="font-medium py-2 hover:text-primary transition-colors" onClick={toggleMobileMenu}>
+            <Link 
+              to="/shop" 
+              className={`font-medium py-2 hover:text-primary transition-colors relative ${
+                isActive('/shop') ? 'text-primary' : ''
+              }`} 
+              onClick={toggleMobileMenu}
+            >
               Shop
+              {isActive('/shop') && (
+                <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
+              )}
             </Link>
             {user && (
-              <Link to="/orders" className="font-medium hover:text-primary transition-colors" onClick={toggleMobileMenu}>
+              <Link 
+                to="/orders" 
+                className={`font-medium py-2 hover:text-primary transition-colors relative ${
+                  isActive('/orders') ? 'text-primary' : ''
+                }`} 
+                onClick={toggleMobileMenu}
+              >
                 My Orders
+                {isActive('/orders') && (
+                  <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
+                )}
               </Link>
             )}
   
             {user?.is_admin && (
               <Link 
-                to="/admin/dashboard"  // Change to /admin/dashboard instead of just /admin
-                className="font-medium py-2 hover:text-primary transition-colors"
+                to="/admin/dashboard"
+                className={`font-medium py-2 hover:text-primary transition-colors relative ${
+                  location.pathname.startsWith('/admin') ? 'text-primary' : ''
+                }`}
                 onClick={toggleMobileMenu}
               >
                 Admin Panel
+                {location.pathname.startsWith('/admin') && (
+                  <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
+                )}
               </Link>
             )}
-            <Link to="/custom-order" className="font-medium py-2 hover:text-primary transition-colors" onClick={toggleMobileMenu}>
+            <Link 
+              to="/custom-order" 
+              className={`font-medium py-2 hover:text-primary transition-colors relative ${
+                isActive('/custom-order') ? 'text-primary' : ''
+              }`} 
+              onClick={toggleMobileMenu}
+            >
               Custom Order
+              {isActive('/custom-order') && (
+                <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
+              )}
             </Link>
             <div className="flex items-center py-2">
               <Search size={20} className="mr-2" />
