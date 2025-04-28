@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, User, Search, Menu, X, LogOut } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,45 @@ import { useToast } from '@/components/ui/use-toast';
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [cartItemsCount, setCartItemsCount] = useState(0);
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  useEffect(() => {
+    if (user) {
+      fetchCartItems();
+    } else {
+      // If no user, check local storage for guest cart
+      const localCart = localStorage.getItem('guestCart');
+      if (localCart) {
+        try {
+          const cartItems = JSON.parse(localCart);
+          setCartItemsCount(cartItems.length);
+        } catch (error) {
+          console.error('Error parsing local cart:', error);
+          setCartItemsCount(0);
+        }
+      } else {
+        setCartItemsCount(0);
+      }
+    }
+  }, [user]);
+
+  const fetchCartItems = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('cart_items')
+        .select('*')
+        .eq('user_id', user.id);
+        
+      if (error) throw error;
+      
+      setCartItemsCount(data.length);
+    } catch (error) {
+      console.error('Error fetching cart items:', error);
+    }
+  };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -80,9 +115,14 @@ const Navigation = () => {
           </Button>
           {user ? (
             <>
-              <Link to="/cart">
+              <Link to="/cart" className="relative">
                 <Button variant="ghost" size="icon" aria-label="Cart">
                   <ShoppingBag size={20} />
+                  {cartItemsCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartItemsCount}
+                    </span>
+                  )}
                 </Button>
               </Link>
               <Button variant="ghost" size="icon" onClick={handleLogout} aria-label="Logout">
@@ -101,9 +141,14 @@ const Navigation = () => {
         {/* Mobile Menu Button */}
         <div className="flex md:hidden items-center space-x-4">
           {user && (
-            <Link to="/cart">
+            <Link to="/cart" className="relative">
               <Button variant="ghost" size="icon" aria-label="Cart">
                 <ShoppingBag size={20} />
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartItemsCount}
+                  </span>
+                )}
               </Button>
             </Link>
           )}
