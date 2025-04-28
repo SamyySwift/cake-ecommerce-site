@@ -202,7 +202,7 @@ const Checkout = () => {
         <div className="border rounded-lg p-6 h-fit">
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
-          // Update the Order Summary section
+          {/* // Update the Order Summary section */}
           <div className="space-y-4 mb-6">
             {cartItems.map((item) => (
               <div key={item.id} className="flex justify-between">
@@ -210,7 +210,7 @@ const Checkout = () => {
                   {item.products.name} ({item.size_name}) × {item.quantity}
                 </span>
                 <span>
-                  ₦{(item.size_price * item.quantity).toFixed(2)}
+                  ₦{(item.size_price * item.quantity).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </div>
             ))}
@@ -218,7 +218,7 @@ const Checkout = () => {
             <div className="border-t pt-4">
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>₦{subtotal.toFixed(2)}</span>
+                <span>₦{subtotal.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
             </div>
           </div>

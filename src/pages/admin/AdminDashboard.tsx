@@ -94,7 +94,7 @@ const AdminDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-500">Total Revenue</p>
-                <h3 className="text-2xl font-bold mt-1">₦{stats.totalRevenue.toFixed(2)}</h3>
+                <h3 className="text-2xl font-bold mt-1">₦{stats.totalRevenue.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
               </div>
               <div className="bg-purple-100 p-3 rounded-full">
                 <DollarSign className="h-6 w-6 text-purple-600" />

@@ -149,11 +149,11 @@ const Cart = () => {
                 <div className="space-y-2 mb-6">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span>₦{totalAmount.toFixed(2)}</span>
+                    <span>₦{totalAmount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                   <div className="border-t pt-2 mt-2 font-semibold flex justify-between">
                     <span>Total</span>
-                    <span>₦{totalAmount.toFixed(2)}</span>
+                    <span>₦{totalAmount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
                 

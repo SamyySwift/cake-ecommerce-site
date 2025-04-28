@@ -157,7 +157,7 @@ const OrderSummary = () => {
                         </p>
                       </div>
                       <p className="font-medium">
-                        ₦{(item.price_at_time * item.quantity).toFixed(2)}
+                        ₦{(item.price_at_time * item.quantity).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
                     </div>
                   ))}
@@ -167,7 +167,7 @@ const OrderSummary = () => {
               <div className="border-t pt-4">
                 <div className="flex justify-between font-medium">
                   <span>Total</span>
-                  <span>₦{order.total_amount.toFixed(2)}</span>
+                  <span>₦{order.total_amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
             </div>

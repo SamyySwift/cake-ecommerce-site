@@ -90,7 +90,7 @@ const CartItem = ({ item }: CartItemProps) => {
           
           <div className="flex items-center gap-4">
             <span className="font-semibold">
-              ${(item.quantity * item.size_price).toFixed(2)}
+              ₦{(item.quantity * item.size_price).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
             <Button
               variant="destructive"

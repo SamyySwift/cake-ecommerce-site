@@ -93,7 +93,7 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           </div>
           <span className="text-sm text-muted-foreground ml-2">({product.reviews})</span>
         </div>
-        <div className="mt-2 font-semibold">₦{product.price.toFixed(2)}</div>
+        <div className="mt-2 font-semibold">₦{product.price.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
         {product.sameDay && (
           <div className="mt-2 text-sm text-green-600">Available for Same-day Delivery</div>
         )}

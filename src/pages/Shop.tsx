@@ -8,60 +8,78 @@ import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useProducts, getUniqueCategories, getUniqueFlavors } from '@/hooks/useProducts';
 
-const PRODUCTS_PER_PAGE = 9;
-
 const Shop = () => {
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(categoryParam ? [categoryParam] : []);
+  // Filter states
+  const [priceRange, setPriceRange] = useState([0, 200_000]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    categoryParam ? [categoryParam] : []
+  );
   const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 200000]);
   const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 9;
 
   const { data: products = [], isLoading } = useProducts();
 
+  // Get unique categories and flavors from products
   const categories = useMemo(() => getUniqueCategories(products), [products]);
   const flavors = useMemo(() => getUniqueFlavors(products), [products]);
 
+  // Filter products
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
 
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter(product => selectedCategories.includes(product.category));
+      filtered = filtered.filter(product =>
+        selectedCategories.includes(product.category)
+      );
     }
 
     if (selectedFlavors.length > 0) {
-      filtered = filtered.filter(product => product.flavors && product.flavors.some(flavor => selectedFlavors.includes(flavor)));
+      filtered = filtered.filter(product =>
+        product.flavors && product.flavors.some(flavor => selectedFlavors.includes(flavor))
+      );
     }
 
-    filtered = filtered.filter(product => product.price >= priceRange[0] && product.price <= priceRange[1]);
+    filtered = filtered.filter(product =>
+      product.price >= priceRange[0] && product.price <= priceRange[1]
+    );
 
     return filtered;
   }, [products, selectedCategories, selectedFlavors, priceRange]);
 
-  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-  const paginatedProducts = filteredProducts.slice((currentPage - 1) * PRODUCTS_PER_PAGE, currentPage * PRODUCTS_PER_PAGE);
+  // Pagination
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll to top when changing page
+  };
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategories(prev => prev.includes(category) ? prev.filter(item => item !== category) : [...prev, category]);
-    setCurrentPage(1);
+    setSelectedCategories(prev =>
+      prev.includes(category)
+        ? prev.filter(item => item !== category)
+        : [...prev, category]
+    );
   };
 
   const handleFlavorChange = (flavor: string) => {
-    setSelectedFlavors(prev => prev.includes(flavor) ? prev.filter(item => item !== flavor) : [...prev, flavor]);
-    setCurrentPage(1);
-  };
-
-  const handlePriceChange = (value: number[]) => {
-    setPriceRange(value);
-    setCurrentPage(1);
+    setSelectedFlavors(prev =>
+      prev.includes(flavor)
+        ? prev.filter(item => item !== flavor)
+        : [...prev, flavor]
+    );
   };
 
   const clearFilters = () => {
     setSelectedCategories([]);
     setSelectedFlavors([]);
-    setPriceRange([0, 200000]);
+    setPriceRange([0, 200_000]);
     setCurrentPage(1);
   };
 
@@ -75,17 +93,19 @@ const Shop = () => {
             <div className="sticky top-24 space-y-8">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">Filters</h2>
-                <Button variant="ghost" size="sm" onClick={clearFilters}>Clear All</Button>
+                <Button variant="ghost" size="sm" onClick={clearFilters}>
+                  Clear All
+                </Button>
               </div>
 
               {/* Price Range */}
               <div className="space-y-4">
                 <h3 className="font-semibold">Price Range (₦)</h3>
-                <Slider 
+                <Slider
                   value={priceRange}
-                  onValueChange={handlePriceChange}
+                  onValueChange={setPriceRange}
                   min={0}
-                  max={200000}
+                  max={200_000}
                   step={500}
                 />
                 <div className="flex justify-between text-sm">
@@ -100,7 +120,7 @@ const Shop = () => {
                 <div className="space-y-2">
                   {categories.map(category => (
                     <div key={category} className="flex items-center space-x-2">
-                      <Checkbox 
+                      <Checkbox
                         id={`category-${category}`}
                         checked={selectedCategories.includes(category)}
                         onCheckedChange={() => handleCategoryChange(category)}
@@ -119,7 +139,7 @@ const Shop = () => {
                 <div className="space-y-2">
                   {flavors.map(flavor => (
                     <div key={flavor} className="flex items-center space-x-2">
-                      <Checkbox 
+                      <Checkbox
                         id={`flavor-${flavor}`}
                         checked={selectedFlavors.includes(flavor)}
                         onCheckedChange={() => handleFlavorChange(flavor)}
@@ -131,6 +151,7 @@ const Shop = () => {
                   ))}
                 </div>
               </div>
+
             </div>
           </div>
 
@@ -149,46 +170,81 @@ const Shop = () => {
               <div className="text-center py-16">
                 <p>Loading products...</p>
               </div>
-            ) : paginatedProducts.length > 0 ? (
+            ) : currentProducts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {paginatedProducts.map(product => (
+                {currentProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             ) : (
               <div className="text-center py-16">
                 <h3 className="text-xl font-semibold">No products found</h3>
-                <p className="text-muted-foreground mt-2">Try changing your filters or search criteria</p>
+                <p className="text-muted-foreground mt-2">
+                  Try changing your filters
+                </p>
               </div>
             )}
 
             {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="mt-12 flex justify-center items-center space-x-2">
-                <Button
-                  variant="ghost"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                >
-                  Previous
-                </Button>
-                {Array.from({ length: totalPages }, (_, i) => (
+            {filteredProducts.length > productsPerPage && (
+              <div className="mt-12 flex justify-center items-center gap-2 flex-wrap">
+                {currentPage > 1 && (
                   <Button
-                    key={i + 1}
-                    variant={currentPage === i + 1 ? 'default' : 'ghost'}
-                    size="icon"
-                    onClick={() => setCurrentPage(i + 1)}
+                    variant="outline"
+                    onClick={() => paginate(currentPage - 1)}
                   >
-                    {i + 1}
+                    Previous
                   </Button>
-                ))}
-                <Button
-                  variant="ghost"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                >
-                  Next
-                </Button>
+                )}
+
+                {/* Page Numbers */}
+                {(() => {
+                  const pageNumbers = [];
+                  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+                  if (totalPages <= 5) {
+                    for (let i = 1; i <= totalPages; i++) {
+                      pageNumbers.push(i);
+                    }
+                  } else {
+                    if (currentPage <= 3) {
+                      pageNumbers.push(1, 2, 3, '...', totalPages);
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumbers.push(1, '...', totalPages - 2, totalPages - 1, totalPages);
+                    } else {
+                      pageNumbers.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+                    }
+                  }
+
+                  return pageNumbers.map((number, index) => {
+                    if (number === '...') {
+                      return (
+                        <span key={`ellipsis-${index}`} className="px-2">
+                          ...
+                        </span>
+                      );
+                    }
+
+                    return (
+                      <Button
+                        key={number}
+                        variant={number === currentPage ? "default" : "outline"}
+                        onClick={() => paginate(number as number)}
+                      >
+                        {number}
+                      </Button>
+                    );
+                  });
+                })()}
+
+                {indexOfLastProduct < filteredProducts.length && (
+                  <Button
+                    variant="outline"
+                    onClick={() => paginate(currentPage + 1)}
+                  >
+                    Next
+                  </Button>
+                )}
               </div>
             )}
 

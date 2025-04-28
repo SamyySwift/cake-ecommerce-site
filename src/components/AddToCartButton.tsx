@@ -88,7 +88,7 @@ export const AddToCartButton = ({
       onClick={handleAddToCart}
       disabled={disabled || isLoading}
     >
-      {isLoading ? "Adding to Cart..." : `Add to Cart - $${(selectedSize.price * quantity).toFixed(2)}`}
+      {isLoading ? "Adding to Cart..." : `Add to Cart - ₦${(selectedSize.price * quantity).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
     </Button>
   );
 };

@@ -94,7 +94,7 @@ const Orders = () => {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <p className="font-medium">₦{order.total_amount.toFixed(2)}</p>
+                  <p className="font-medium">₦{order.total_amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                   <Button variant="ghost" size="sm">
                     View Details
                   </Button>

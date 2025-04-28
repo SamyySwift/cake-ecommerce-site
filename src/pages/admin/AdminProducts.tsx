@@ -45,21 +45,47 @@ const AdminProducts = () => {
 
   const confirmDeleteProduct = async () => {
     if (!selectedProduct) return;
-    
+  
     setIsProcessing(true);
     try {
+      // First delete the image from storage if it exists
+      if (selectedProduct.image_url) {
+        try {
+          // Extract the path after `/public/product-images/`
+          const url = new URL(selectedProduct.image_url);
+          const fullPath = url.pathname.split('/storage/v1/object/public/product-images/')[1];
+      
+          if (fullPath) {
+            const { error: storageError } = await supabase.storage
+              .from('product-images')
+              .remove([fullPath]);
+            
+            if (storageError) {
+              console.error('Error deleting image:', storageError);
+            } else {
+              console.log('Successfully deleted image:', fullPath);
+            }
+          } else {
+            console.error('Could not extract file path from image_url');
+          }
+        } catch (imageError) {
+          console.error('Error processing image deletion:', imageError);
+        }
+      }
+  
+      // Then delete the product from the database
       const { error } = await supabase
         .from('products')
         .delete()
         .eq('id', selectedProduct.id);
-        
+  
       if (error) throw error;
-      
+  
       toast({
         title: "Product deleted",
         description: `${selectedProduct.name} has been deleted successfully`
       });
-      
+  
       refetch();
     } catch (error: any) {
       toast({
@@ -172,7 +198,7 @@ const AdminProducts = () => {
                         onCheckedChange={() => toggleProductFeatured(product, 'sameDay')}
                       />
                     </TableCell>
-                    <TableCell className="text-right">${product.price}</TableCell>
+                    <TableCell className="text-right">₦{product.price.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <Button 

@@ -340,7 +340,7 @@ const AdminOrders = () => {
                       </div>
                     </TableCell>
                     <TableCell>{order.items_count}</TableCell>
-                    <TableCell>₦{order.total_amount.toFixed(2)}</TableCell>
+                    <TableCell>₦{order.total_amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</TableCell>
                     <TableCell>
                       <div className={`
                         inline-block px-2 py-1 rounded-full text-xs font-medium
@@ -412,7 +412,7 @@ const AdminOrders = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-gray-500">Total</h3>
-                  <p className="font-semibold">₦{selectedOrder.total_amount.toFixed(2)}</p>
+                  <p className="font-semibold">₦{selectedOrder.total_amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                 </div>
               </div>
               
@@ -473,7 +473,7 @@ const AdminOrders = () => {
                             {item.quantity}
                           </TableCell>
                           <TableCell className="text-right font-medium">
-                            ₦{(item.price_at_time * item.quantity).toFixed(2)}
+                            ₦{(item.price_at_time * item.quantity).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                           </TableCell>
                         </TableRow>
                       ))}
@@ -482,7 +482,7 @@ const AdminOrders = () => {
                           Total
                         </TableCell>
                         <TableCell className="text-right font-bold">
-                          ₦{selectedOrder.total_amount.toFixed(2)}
+                          ₦{selectedOrder.total_amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </TableCell>
                       </TableRow>
                     </TableBody>

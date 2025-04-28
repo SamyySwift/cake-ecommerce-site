@@ -215,23 +215,24 @@ const ProductForm = ({ initialProduct, onSuccess }: ProductFormProps) => {
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="cakes">Cakes</SelectItem>
+                <SelectItem value="cakes">Wedding</SelectItem>
                 <SelectItem value="cupcakes">Birthday</SelectItem>
                 <SelectItem value="cupcakes">Cupcakes</SelectItem>
                 <SelectItem value="pastries">Specialty</SelectItem>
+                <SelectItem value="pastries">CheeseCake</SelectItem>
               </SelectContent>
             </Select>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="price">Base Price ($) *</Label>
+            <Label htmlFor="price">Base Price (₦) *</Label>
             <Input
               id="price"
               name="price"
               type="number"
               min="0"
               step="0.01"
-              value={product.price}
+              value={product.price.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               onChange={handleChange}
               required
             />
@@ -329,7 +330,7 @@ const ProductForm = ({ initialProduct, onSuccess }: ProductFormProps) => {
                 <div key={size.name} className="flex items-center justify-between bg-gray-100 rounded px-3 py-2">
                   <div>
                     <span className="font-medium">{size.name}</span>
-                    <span className="ml-2 text-gray-500">${size.price}</span>
+                    <span className="ml-2 text-gray-500">₦{size.price.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                   <button
                     type="button"
@@ -354,7 +355,7 @@ const ProductForm = ({ initialProduct, onSuccess }: ProductFormProps) => {
                 step="0.01"
                 value={newSize.price || ''}
                 onChange={(e) => setNewSize({...newSize, price: parseFloat(e.target.value) || 0})}
-                placeholder="Price ($)"
+                placeholder="Price (₦)"
                 className="col-span-1"
               />
               <Button 
