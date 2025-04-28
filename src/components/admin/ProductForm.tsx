@@ -216,9 +216,9 @@ const ProductForm = ({ initialProduct, onSuccess }: ProductFormProps) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="cakes">Cakes</SelectItem>
+                <SelectItem value="cupcakes">Birthday</SelectItem>
                 <SelectItem value="cupcakes">Cupcakes</SelectItem>
-                <SelectItem value="cookies">Cookies</SelectItem>
-                <SelectItem value="pastries">Pastries</SelectItem>
+                <SelectItem value="pastries">Specialty</SelectItem>
               </SelectContent>
             </Select>
           </div>

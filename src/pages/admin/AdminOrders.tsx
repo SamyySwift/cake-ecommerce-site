@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,7 +24,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -36,6 +36,8 @@ interface Order {
   created_at: string;
   updated_at: string;
   user_email?: string;
+  customer_name?: string;
+  delivery_address?: string;
   items_count?: number;
 }
 
@@ -48,6 +50,9 @@ const AdminOrders = () => {
   const [orderItems, setOrderItems] = useState<any[]>([]);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
   const { toast } = useToast();
 
   useEffect(() => {
@@ -57,34 +62,40 @@ const AdminOrders = () => {
   const fetchOrders = async () => {
     setIsLoading(true);
     try {
-        // Get orders with user email, customer details, and items count
-        const { data, error } = await supabase
-            .from('orders')
-            .select(`
-                *,
-                order_items (
-                    id
-                )
-            `)
-            .order('created_at', { ascending: false });
+      // Get orders with user email, customer details, and items count
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          order_items (
+            id
+          )
+        `)
+        .order('created_at', { ascending: false });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        // Merge user details into orders
-        const ordersWithDetails = data.map(order => ({
-            ...order,
-            user_email: order.customer_email || 'Unknown',
-            customer_name: order.customer_name || 'Unknown',
-            items_count: order.order_items?.length || 0
-        }));
+      // Merge user details into orders
+      const ordersWithDetails = data.map(order => ({
+        ...order,
+        user_email: order.customer_email || 'Unknown',
+        customer_name: order.customer_name || 'Unknown',
+        delivery_address: order.delivery_address || 'Not provided',
+        items_count: order.order_items?.length || 0
+      }));
 
-        setOrders(ordersWithDetails);
+      setOrders(ordersWithDetails);
     } catch (error) {
-        console.error('Error fetching orders:', error);
+      console.error('Error fetching orders:', error);
+      toast({
+        title: "Error fetching orders",
+        description: "Failed to load orders. Please try again.",
+        variant: "destructive"
+      });
     } finally {
-        setIsLoading(false);
+      setIsLoading(false);
     }
-};
+  };
 
   const fetchOrderDetails = async (orderId: string) => {
     try {
@@ -102,6 +113,11 @@ const AdminOrders = () => {
       return data;
     } catch (error) {
       console.error('Error fetching order details:', error);
+      toast({
+        title: "Error fetching order details",
+        description: "Failed to load order items.",
+        variant: "destructive"
+      });
       return [];
     }
   };
@@ -110,6 +126,53 @@ const AdminOrders = () => {
     setSelectedOrder(order);
     await fetchOrderDetails(order.id);
     setIsDetailsOpen(true);
+  };
+
+  const handleDeleteOrder = (order: Order) => {
+    setSelectedOrder(order);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteOrder = async () => {
+    if (!selectedOrder) return;
+    
+    setIsDeleting(true);
+    try {
+      // First delete order items
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .delete()
+        .eq('order_id', selectedOrder.id);
+        
+      if (itemsError) throw itemsError;
+      
+      // Then delete the order
+      const { error: orderError } = await supabase
+        .from('orders')
+        .delete()
+        .eq('id', selectedOrder.id);
+        
+      if (orderError) throw orderError;
+      
+      toast({
+        title: "Order deleted",
+        description: `Order #${selectedOrder.id.slice(0, 8)} has been deleted successfully`
+      });
+      
+      // Update local state
+      setOrders(prev => prev.filter(order => order.id !== selectedOrder.id));
+      setIsDeleteDialogOpen(false);
+      setSelectedOrder(null);
+    } catch (error: any) {
+      toast({
+        title: "Error deleting order",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleting(false);
+      setIsDeleteDialogOpen(false);
+    }
   };
 
   const handleStatusChange = async (newStatus: string) => {
@@ -231,7 +294,7 @@ const AdminOrders = () => {
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
               <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="shipped">Shipped</SelectItem>
+              <SelectItem value="out for delivery">Out For Delivery</SelectItem>
               <SelectItem value="delivered">Delivered</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
               <SelectItem value="cancelled">Cancelled</SelectItem>
@@ -268,9 +331,8 @@ const AdminOrders = () => {
                       {format(new Date(order.created_at), 'MMM d, yyyy')}
                     </TableCell>
                     <TableCell>
-                      {order.delivery_address}
+                      {order.delivery_address || 'Not provided'}
                     </TableCell>
-                    {/* // Update the table row to display customer name */}
                     <TableCell>
                       {order.customer_name}
                       <div className="text-sm text-muted-foreground">
@@ -282,10 +344,12 @@ const AdminOrders = () => {
                     <TableCell>
                       <div className={`
                         inline-block px-2 py-1 rounded-full text-xs font-medium
-                        ${order.status === 'paid' ? 'bg-green-100 text-green-800' :
+                        ${order.status === 'out for delivery' ? 'bg-green-100 text-green-800' :
                           order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                           order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
                           order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                          order.status === 'delivered' ? 'bg-purple-100 text-purple-800' :
+                          order.status === 'completed' ? 'bg-green-100 text-green-800' :
                           'bg-gray-100 text-gray-800'}
                       `}>
                         {order.status}
@@ -300,12 +364,20 @@ const AdminOrders = () => {
                         <ExternalLink className="h-4 w-4 mr-1" />
                         View
                       </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDeleteOrder(order)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        Delete
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={8} className="text-center py-8">
                     No orders found
                   </TableCell>
                 </TableRow>
@@ -356,9 +428,8 @@ const AdminOrders = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="paid">Paid</SelectItem>
                     <SelectItem value="processing">Processing</SelectItem>
-                    <SelectItem value="shipped">Shipped</SelectItem>
+                    <SelectItem value="out for delivery">Out For Delivery</SelectItem>
                     <SelectItem value="delivered">Delivered</SelectItem>
                     <SelectItem value="completed">Completed</SelectItem>
                     <SelectItem value="cancelled">Cancelled</SelectItem>
@@ -424,6 +495,35 @@ const AdminOrders = () => {
           <DialogFooter>
             <Button onClick={() => setIsDetailsOpen(false)}>
               Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Order</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p>Are you sure you want to delete order #{selectedOrder?.id.slice(0, 8)}?</p>
+            <p className="text-sm text-muted-foreground mt-2">This action cannot be undone.</p>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteOrder}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete Order"}
             </Button>
           </DialogFooter>
         </DialogContent>
