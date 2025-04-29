@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingBag, User, Search, Menu, X, LogOut } from 'lucide-react';
@@ -7,21 +6,32 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
-
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cartItemsCount, setCartItemsCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false); // <-- NEW
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const location = useLocation();
-  
+
   useEffect(() => {
     if (user) {
       fetchCartItems();
+
+      // Save is_admin to localStorage if user logs in
+      if (user.is_admin) {
+        localStorage.setItem('isAdmin', 'true');
+        setIsAdmin(true);
+      } else {
+        localStorage.removeItem('isAdmin');
+        setIsAdmin(false);
+      }
     } else {
-      // If no user, check local storage for guest cart
+      // No user logged in, check localStorage for guest cart and admin
       const localCart = localStorage.getItem('guestCart');
+      const storedIsAdmin = localStorage.getItem('isAdmin');
+      
       if (localCart) {
         try {
           const cartItems = JSON.parse(localCart);
@@ -33,8 +43,20 @@ const Navigation = () => {
       } else {
         setCartItemsCount(0);
       }
+
+      // Set isAdmin based on localStorage, regardless of user state
+      setIsAdmin(storedIsAdmin === 'true');
     }
   }, [user]);
+
+  // Add a separate useEffect to ensure isAdmin is always checked
+  useEffect(() => {
+    // This will run on every render to ensure isAdmin is always up-to-date
+    const storedIsAdmin = localStorage.getItem('isAdmin');
+    if (storedIsAdmin === 'true' && !isAdmin) {
+      setIsAdmin(true);
+    }
+  }, [isAdmin]);
 
   const fetchCartItems = async () => {
     try {
@@ -42,9 +64,9 @@ const Navigation = () => {
         .from('cart_items')
         .select('*')
         .eq('user_id', user.id);
-        
+
       if (error) throw error;
-      
+
       setCartItemsCount(data.length);
     } catch (error) {
       console.error('Error fetching cart items:', error);
@@ -63,9 +85,11 @@ const Navigation = () => {
     try {
       await supabase.auth.signOut();
       navigate('/');
-      toast({
-        title: "Logged out successfully"
-      });
+      toast({ title: "Logged out successfully" });
+
+      localStorage.removeItem('isAdmin'); // <-- clear isAdmin on logout
+      setIsAdmin(false);
+
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -75,8 +99,7 @@ const Navigation = () => {
     }
   };
 
-  // Function to check if a link is active
-  const isActive = (path) => {
+  const isActive = (path: string) => {
     return location.pathname === path;
   };
 
@@ -97,9 +120,7 @@ const Navigation = () => {
             }`}
           >
             Home
-            {isActive('/') && (
-              <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
-            )}
+            {isActive('/') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
           </Link>
           <Link 
             to="/shop" 
@@ -108,9 +129,7 @@ const Navigation = () => {
             }`}
           >
             Shop
-            {isActive('/shop') && (
-              <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
-            )}
+            {isActive('/shop') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
           </Link>
           <Link 
             to="/custom-order" 
@@ -119,9 +138,7 @@ const Navigation = () => {
             }`}
           >
             Custom Order
-            {isActive('/custom-order') && (
-              <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
-            )}
+            {isActive('/custom-order') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
           </Link>
           {user && (
             <Link 
@@ -131,12 +148,10 @@ const Navigation = () => {
               }`}
             >
               My Orders
-              {isActive('/orders') && (
-                <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
-              )}
+              {isActive('/orders') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
             </Link>
           )}
-          {user?.is_admin && (
+          {isAdmin && (
             <Link 
               to="/admin" 
               className={`font-medium hover:text-primary transition-colors relative ${
@@ -144,9 +159,7 @@ const Navigation = () => {
               }`}
             >
               Admin Panel
-              {location.pathname.startsWith('/admin') && (
-                <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>
-              )}
+              {location.pathname.startsWith('/admin') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
             </Link>
           )}
         </nav>
@@ -213,9 +226,7 @@ const Navigation = () => {
               onClick={toggleMobileMenu}
             >
               Home
-              {isActive('/') && (
-                <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-              )}
+              {isActive('/') && <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>}
             </Link>
             <Link 
               to="/shop" 
@@ -225,9 +236,7 @@ const Navigation = () => {
               onClick={toggleMobileMenu}
             >
               Shop
-              {isActive('/shop') && (
-                <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-              )}
+              {isActive('/shop') && <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>}
             </Link>
             {user && (
               <Link 
@@ -238,13 +247,10 @@ const Navigation = () => {
                 onClick={toggleMobileMenu}
               >
                 My Orders
-                {isActive('/orders') && (
-                  <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-                )}
+                {isActive('/orders') && <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>}
               </Link>
             )}
-  
-            {user?.is_admin && (
+            {isAdmin && (
               <Link 
                 to="/admin/dashboard"
                 className={`font-medium py-2 hover:text-primary transition-colors relative ${
@@ -253,9 +259,7 @@ const Navigation = () => {
                 onClick={toggleMobileMenu}
               >
                 Admin Panel
-                {location.pathname.startsWith('/admin') && (
-                  <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-                )}
+                {location.pathname.startsWith('/admin') && <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>}
               </Link>
             )}
             <Link 
@@ -266,9 +270,7 @@ const Navigation = () => {
               onClick={toggleMobileMenu}
             >
               Custom Order
-              {isActive('/custom-order') && (
-                <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-              )}
+              {isActive('/custom-order') && <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>}
             </Link>
             <div className="flex items-center py-2">
               <Search size={20} className="mr-2" />

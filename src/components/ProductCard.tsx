@@ -5,6 +5,7 @@ import { Product } from '@/data/products';
 import { Star, ShoppingBag, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -75,13 +76,15 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
           className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          
+         
           <Button 
             className="w-full rounded-full bg-white text-foreground hover:bg-white/90 flex items-center justify-center"
-            
+            onClick={handleClick}
           >
             <ShoppingBag size={16} className="mr-2" /> Add to Cart
           </Button>
+        
+         
         </div>
       </div>
       <div className="p-4 cursor-pointer" onClick={handleClick}>

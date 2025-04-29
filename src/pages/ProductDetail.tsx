@@ -64,7 +64,7 @@ const ProductDetail = () => {
 
   // Prepare images array, using image_url first if available, then falling back to image
   const images = [
-    product.image_url || product.image || '',
+    product.image_url || '',
     "https://images.unsplash.com/photo-1587668178277-295251f900ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80",
     "https://images.unsplash.com/photo-1488477304112-4944851de03d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
   ];
@@ -92,7 +92,7 @@ const ProductDetail = () => {
             setSelectedImage={setSelectedImage}
           />
           
-          <div>
+          <div className='space-x-2'>
             {product.bestseller && (
               <span className="inline-block bg-yellow-400 text-yellow-800 text-xs font-semibold px-2 py-1 rounded mb-4">
                 Bestseller
@@ -109,7 +109,7 @@ const ProductDetail = () => {
             <ProductRating rating={product.rating || 0} reviews={product.reviews || 0} />
             
             <p className="text-2xl font-semibold mb-4">
-              ${selectedSize.price.toFixed(2)}
+              ₦{selectedSize.price.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
             
             <p className="text-muted-foreground mb-8">
