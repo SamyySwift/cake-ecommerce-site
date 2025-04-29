@@ -120,7 +120,7 @@ const Navigation = () => {
             }`}
           >
             Home
-            {isActive('/') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
+            {isActive('/') && <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>}
           </Link>
           <Link 
             to="/shop" 
@@ -129,7 +129,7 @@ const Navigation = () => {
             }`}
           >
             Shop
-            {isActive('/shop') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
+            {isActive('/shop') && <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>}
           </Link>
           <Link 
             to="/custom-order" 
@@ -138,7 +138,7 @@ const Navigation = () => {
             }`}
           >
             Custom Order
-            {isActive('/custom-order') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
+            {isActive('/custom-order') && <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>}
           </Link>
           {user && (
             <Link 
@@ -148,7 +148,7 @@ const Navigation = () => {
               }`}
             >
               My Orders
-              {isActive('/orders') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
+              {isActive('/orders') && <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>}
             </Link>
           )}
           {isAdmin && (
@@ -159,7 +159,7 @@ const Navigation = () => {
               }`}
             >
               Admin Panel
-              {location.pathname.startsWith('/admin') && <span className="absolute bottom-[-8px] left-0 w-full h-0.5 bg-primary rounded-full"></span>}
+              {location.pathname.startsWith('/admin') && <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>}
             </Link>
           )}
         </nav>
