@@ -6,6 +6,16 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { Trash2 } from "lucide-react";
 
 type Order = {
   id: string;
@@ -18,8 +28,12 @@ type Order = {
 const Orders = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -60,6 +74,52 @@ const Orders = () => {
     }
   };
 
+  const handleDeleteClick = (e: React.MouseEvent, order: Order) => {
+    e.stopPropagation(); // Prevent navigation when clicking delete
+    setSelectedOrder(order);
+    setShowDeleteDialog(true);
+  };
+
+  const handleDeleteOrder = async () => {
+    if (!selectedOrder) return;
+
+    setIsDeleting(true);
+    try {
+      // First delete order items
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .delete()
+        .eq('order_id', selectedOrder.id);
+
+      if (itemsError) throw itemsError;
+
+      // Then delete the order
+      const { error: orderError } = await supabase
+        .from('orders')
+        .delete()
+        .eq('id', selectedOrder.id)
+        .eq('user_id', user?.id); // Ensure user can only delete their own orders
+
+      if (orderError) throw orderError;
+
+      setOrders(prev => prev.filter(order => order.id !== selectedOrder.id));
+      toast({
+        title: "Order deleted",
+        description: "Your order has been successfully deleted",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to delete order. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+      setSelectedOrder(null);
+    }
+  };
+
   return (
     <>
       <Navigation />
@@ -95,15 +155,54 @@ const Orders = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <p className="font-medium">₦{order.total_amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                  <Button variant="ghost" size="sm">
-                    View Details
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="sm">
+                      View Details
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={(e) => handleDeleteClick(e, order)}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         )}
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Order</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this order? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteOrder}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete Order"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </>
   );

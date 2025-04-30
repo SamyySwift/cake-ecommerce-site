@@ -8,7 +8,7 @@ import { useCart } from '@/hooks/useCart';
 import CartItem from '@/components/cart/CartItem';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { ShoppingBag, Check } from 'lucide-react';
+import { ShoppingBag, Check, CreditCard } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 const Cart = () => {
@@ -162,6 +162,7 @@ const Cart = () => {
                     className="w-full py-6 text-lg"
                     onClick={() => navigate('/checkout')}
                   >
+                    <CreditCard className="mr-2" />
                     Proceed to Checkout
                   </Button>
                 ) : (
@@ -177,7 +178,11 @@ const Cart = () => {
           </div>
         )}
       </main>
+
       <Footer />
+
+   
+     
     </>
   );
 };

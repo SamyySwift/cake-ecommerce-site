@@ -215,11 +215,11 @@ const ProductForm = ({ initialProduct, onSuccess }: ProductFormProps) => {
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="cakes">Wedding</SelectItem>
-                <SelectItem value="cupcakes">Birthday</SelectItem>
-                <SelectItem value="cupcakes">Cupcakes</SelectItem>
-                <SelectItem value="pastries">Specialty</SelectItem>
-                <SelectItem value="pastries">CheeseCake</SelectItem>
+                <SelectItem value="Wedding Cakes">Wedding</SelectItem>
+                <SelectItem value="Birthday Cakes">Birthday</SelectItem>
+                <SelectItem value="Cupcakes">Cupcakes</SelectItem>
+                <SelectItem value="Specialty Cakes">Specialty</SelectItem>
+                <SelectItem value="Cheesecakes">CheeseCake</SelectItem>
               </SelectContent>
             </Select>
           </div>

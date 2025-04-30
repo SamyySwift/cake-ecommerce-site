@@ -63,7 +63,7 @@ const CartItem = ({ item }: CartItemProps) => {
           <p>Delivery: {format(new Date(item.delivery_date), 'PPP')}</p>
         </div>
         
-        <div className="flex items-center justify-between mt-4">
+        <div className="flex items-center justify-between mt-4 gap-4">
           <div className="flex items-center border rounded-lg">
             <Button 
               variant="ghost" 
@@ -88,7 +88,7 @@ const CartItem = ({ item }: CartItemProps) => {
             </Button>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-8">
             <span className="font-semibold">
               ₦{(item.quantity * item.size_price).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>

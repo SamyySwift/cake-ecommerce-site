@@ -6,6 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { PaystackButton } from "react-paystack";
+import { CreditCard } from "lucide-react";
+import Footer from "@/components/Footer";
+import Navigation from "@/components/Navigation";
 
 const Checkout = () => {
   const { cartItems, removeAllItems } = useCart();
@@ -19,14 +22,15 @@ const Checkout = () => {
   const [address, setAddress] = useState("");
 
   // Add a null check for cartItems
-  const subtotal = cartItems?.reduce((total, item) => {
-    return total + (item.size_price * item.quantity);
-  }, 0) || 0;
+  const subtotal =
+    cartItems?.reduce((total, item) => {
+      return total + item.size_price * item.quantity;
+    }, 0) || 0;
 
   const handlePaystackSuccess = async (reference: any) => {
     try {
       setLoading(true);
-      
+
       // Create order in Supabase with pending status
       const { data: order, error: orderError } = await supabase
         .from("orders")
@@ -38,7 +42,7 @@ const Checkout = () => {
           customer_email: email,
           customer_phone: phone,
           delivery_address: address,
-          payment_reference: reference.reference
+          payment_reference: reference.reference,
         })
         .select()
         .single();
@@ -46,17 +50,15 @@ const Checkout = () => {
       if (orderError) throw orderError;
 
       // Create order items
-      const { error: itemsError } = await supabase
-        .from("order_items")
-        .insert(
-          cartItems.map((item) => ({
-            order_id: order.id,
-            product_id: item.products.id.toString(),
-            quantity: item.quantity,
-            price_at_time: item.size_price,
-            size: item.size_name, // Changed from selected_size to size_name
-          }))
-        );
+      const { error: itemsError } = await supabase.from("order_items").insert(
+        cartItems.map((item) => ({
+          order_id: order.id,
+          product_id: item.products.id.toString(),
+          quantity: item.quantity,
+          price_at_time: item.size_price,
+          size: item.size_name, // Changed from selected_size to size_name
+        }))
+      );
 
       if (itemsError) throw itemsError;
 
@@ -80,7 +82,7 @@ const Checkout = () => {
       navigate(`/order/${order.id}`);
     } catch (error: any) {
       console.error("Order creation error:", error);
-      
+
       // If order was created but later steps failed, update to cancelled
       if (order?.id) {
         await supabase
@@ -118,15 +120,15 @@ const Checkout = () => {
         {
           display_name: "Phone Number",
           variable_name: "phone",
-          value: phone
+          value: phone,
         },
         {
           display_name: "Delivery Address",
           variable_name: "address",
-          value: address
-        }
-      ]
-    }
+          value: address,
+        },
+      ],
+    },
   };
 
   // Modify the validateForm function to not show toast on every render
@@ -148,98 +150,128 @@ const Checkout = () => {
   };
 
   return (
-    <div className="container py-8">
-      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+    <>
+      <Navigation />
+      <div className="container py-8">
+        <h1 className="text-3xl font-bold mb-8">Checkout</h1>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          <h2 className="text-xl font-semibold">Customer Information</h2>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold">Customer Information</h2>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Full Name</label>
-              <Input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="John Doe"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Email</label>
-              <Input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="john@example.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Phone Number</label>
-              <Input
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="08012345678"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Delivery Address</label>
-              <Input
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="123 Main Street, Lagos"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="border rounded-lg p-6 h-fit">
-          <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-
-          {/* // Update the Order Summary section */}
-          <div className="space-y-4 mb-6">
-            {cartItems.map((item) => (
-              <div key={item.id} className="flex justify-between">
-                <span>
-                  {item.products.name} ({item.size_name}) × {item.quantity}
-                </span>
-                <span>
-                  ₦{(item.size_price * item.quantity).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Full Name
+                </label>
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Doe"
+                  required
+                />
               </div>
-            ))}
 
-            <div className="border-t pt-4">
-              <div className="flex justify-between font-semibold">
-                <span>Total</span>
-                <span>₦{subtotal.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <div>
+                <label className="block text-sm font-medium mb-1">Email</label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="john@example.com"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Phone Number
+                </label>
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="08012345678"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Delivery Address
+                </label>
+                <Input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="123 Main Street, Lagos"
+                  required
+                />
               </div>
             </div>
           </div>
 
-          <PaystackButton
-            {...config}
-            text="Complete Payment"
-            onSuccess={handlePaystackSuccess}
-            onClose={handlePaystackClose}
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md"
-            disabled={loading || !validateForm()}
-            // Add onClick handler to show toast when needed
-            onClick={(e) => {
-              if (!handleValidateForm()) {
-                e.preventDefault();
+          <div className="border rounded-lg p-6 h-fit">
+            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
+
+            {/* // Update the Order Summary section */}
+            <div className="space-y-4 mb-6">
+              {Array.isArray(cartItems) && cartItems.length > 0 ? (
+                cartItems.map((item) => (
+                  <div key={item.id} className="flex justify-between">
+                    <span>
+                      {item.products.name} ({item.size_name}) × {item.quantity}
+                    </span>
+                    <span>
+                      ₦
+                      {(item.size_price * item.quantity).toLocaleString(
+                        "en-NG",
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p>Your cart is empty.</p>
+              )}
+
+              <div className="border-t pt-4">
+                <div className="flex justify-between font-semibold">
+                  <span>Total</span>
+                  <span>
+                    ₦
+                    {subtotal.toLocaleString("en-NG", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <PaystackButton
+              {...config}
+              text={
+                <div className="flex items-center justify-center gap-2">
+                  <CreditCard className="h-4 w-4" /> Complete Payment
+                </div>
               }
-            }}
-          />
+              onSuccess={handlePaystackSuccess}
+              onClose={handlePaystackClose}
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md"
+              disabled={loading || !validateForm()}
+              onClick={(e) => {
+                if (!handleValidateForm()) {
+                  e.preventDefault();
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 

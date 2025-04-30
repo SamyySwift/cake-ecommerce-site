@@ -1,15 +1,12 @@
-
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 const Footer = () => {
   return (
     <footer className="w-full bg-cake-mint py-12 mt-16">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:justify-self-stretch md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* About */}
           <div>
             <h3 className="text-xl font-bold mb-4">Sweet Delights</h3>
@@ -85,7 +82,7 @@ const Footer = () => {
           </div>
 
           {/* Newsletter */}
-          <div>
+          {/* <div>
             <h3 className="text-xl font-bold mb-4">Join Our Newsletter</h3>
             <p className="text-muted-foreground mb-4">
               Subscribe for updates on new flavors, seasonal specials, and exclusive offers.
@@ -98,7 +95,7 @@ const Footer = () => {
               />
               <Button className="cake-button w-full">Subscribe</Button>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="border-t border-muted-foreground/10 mt-12 pt-8 text-center text-muted-foreground">
