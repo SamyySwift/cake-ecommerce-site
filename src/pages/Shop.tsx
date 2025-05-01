@@ -11,6 +11,7 @@ import { useProducts, getUniqueCategories, getUniqueFlavors } from '@/hooks/useP
 const Shop = () => {
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get('category');
+  const searchParam = searchParams.get('search');
 
   // Filter states
   const [priceRange, setPriceRange] = useState([0, 200_000]);
@@ -31,6 +32,16 @@ const Shop = () => {
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
 
+    // Add search filter
+    if (searchParam) {
+      const searchLower = searchParam.toLowerCase();
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(searchLower) ||
+        product.description?.toLowerCase().includes(searchLower) ||
+        product.category?.toLowerCase().includes(searchLower)
+      );
+    }
+
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(product =>
         selectedCategories.includes(product.category)
@@ -48,7 +59,7 @@ const Shop = () => {
     );
 
     return filtered;
-  }, [products, selectedCategories, selectedFlavors, priceRange]);
+  }, [products, selectedCategories, selectedFlavors, priceRange, searchParam]);
 
   // Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
