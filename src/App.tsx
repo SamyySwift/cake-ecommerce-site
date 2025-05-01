@@ -1,9 +1,13 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
 
@@ -23,8 +27,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Checkout from "./pages/Checkout";
 import OrderSummary from "./pages/OrderSummary";
 import Orders from "./pages/Orders";
-
-
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import Returns from "./pages/Returns";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -50,22 +56,32 @@ const App = () => {
                   <Route path="/order/:id" element={<OrderSummary />} />
                   <Route path="/orders" element={<Orders />} />
                   <Route path="/custom-order" element={<CustomOrder />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/returns" element={<Returns />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />
-                  
+
                   {/* Admin Routes */}
-                  <Route path="/admin/*" element={
-                    <ProtectedRoute>
-                      <AdminLayout />
-                    </ProtectedRoute>
-                  }>
-                    <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                  <Route
+                    path="/admin/*"
+                    element={
+                      <ProtectedRoute>
+                        <AdminLayout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route
+                      index
+                      element={<Navigate to="/admin/dashboard" replace />}
+                    />
                     <Route path="dashboard" element={<AdminDashboard />} />
                     <Route path="products" element={<AdminProducts />} />
                     <Route path="orders" element={<AdminOrders />} />
                   </Route>
-                  
+
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </motion.div>
