@@ -17,6 +17,7 @@ const Navigation = () => {
   const { toast } = useToast();
   const location = useLocation();
 
+  console.log(user);
   useEffect(() => {
     if (user) {
       fetchCartItems();
