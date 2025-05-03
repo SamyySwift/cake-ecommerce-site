@@ -26,7 +26,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const getProfile = async (userId: string) => {
-    console.log("Fetching profile for userId:", userId);
     const { data: profile, error } = await supabase
       .from("profiles")
       .select("id, is_admin")
