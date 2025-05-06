@@ -112,7 +112,7 @@ const Checkout = () => {
     reference: new Date().getTime().toString(),
     email: email,
     amount: subtotal * 100, // Convert to kobo
-    publicKey: "pk_test_f4e58c1e6016c61f15bc847a0ad022ade50bacf5",
+    publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
     firstname: name.split(" ")[0],
     lastname: name.split(" ")[1] || "",
     metadata: {
