@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 const Footer = () => {
   return (
     <footer className="w-full bg-cake-mint py-12 md:h-[500px]">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:justify-between md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 mt-10">
+        <div className="grid grid-cols-1 lg:justify-items-end  md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* About */}
           <div>
             <h3 className="text-xl font-bold mb-4">Sweet Delights</h3>
@@ -107,14 +107,6 @@ const Footer = () => {
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
                   Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/privacy"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Privacy Policy
                 </Link>
               </li>
             </ul>

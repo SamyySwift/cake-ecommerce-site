@@ -32,6 +32,9 @@ const AdminProducts = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 9;
   const { toast } = useToast();
 
   const filteredProducts = products?.filter(
@@ -40,6 +43,14 @@ const AdminProducts = () => {
       product.category?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Pagination logic
+  const totalPages = filteredProducts
+    ? Math.ceil(filteredProducts.length / itemsPerPage)
+    : 1;
+  const paginatedProducts = filteredProducts?.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
   const handleEditProduct = (product: Product) => {
     setSelectedProduct(product);
     setIsDialogOpen(true);
@@ -168,8 +179,8 @@ const AdminProducts = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Product</TableHead>
-                <TableHead>Category</TableHead>
+                <TableHead>Cake Name</TableHead>
+                <TableHead>Cake Category</TableHead>
                 <TableHead className="text-center">Bestseller</TableHead>
                 <TableHead className="text-center">New Arrival</TableHead>
                 <TableHead className="text-center">Same Day</TableHead>
@@ -179,7 +190,7 @@ const AdminProducts = () => {
             </TableHeader>
             <TableBody>
               {filteredProducts && filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
+                paginatedProducts.map((product) => (
                   <TableRow key={product.id}>
                     <TableCell className="font-medium">
                       <div className="flex items-center">
@@ -303,6 +314,29 @@ const AdminProducts = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center space-x-2 mt-6">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </Button>
+          <span className="text-sm font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

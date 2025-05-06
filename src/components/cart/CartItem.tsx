@@ -1,10 +1,9 @@
-
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Plus, Minus, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useCart } from '@/hooks/useCart';
-import { format } from 'date-fns';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Plus, Minus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useCart } from "@/hooks/useCart";
+import { format } from "date-fns";
 
 interface CartItemProps {
   item: any; // We'll properly type this once we have the database types
@@ -18,12 +17,12 @@ const CartItem = ({ item }: CartItemProps) => {
   const handleQuantityChange = async (change: number) => {
     const newQuantity = item.quantity + change;
     if (newQuantity < 1) return;
-    
+
     setIsUpdating(true);
     try {
       await updateQuantity.mutateAsync({
         itemId: item.id,
-        quantity: newQuantity
+        quantity: newQuantity,
       });
     } finally {
       setIsUpdating(false);
@@ -43,30 +42,30 @@ const CartItem = ({ item }: CartItemProps) => {
     <div className="flex flex-col md:flex-row items-start gap-4 p-4 border rounded-lg bg-card">
       <div className="w-full md:w-32 h-32 relative rounded-md overflow-hidden">
         <img
-          src={item.products.image_url || '/placeholder.svg'}
+          src={item.products.image_url || "/placeholder.svg"}
           alt={item.products.name}
           className="absolute inset-0 w-full h-full object-cover"
         />
       </div>
-      
+
       <div className="flex-1 space-y-2">
-        <Link 
+        <Link
           to={`/product/${item.products.id}`}
           className="text-lg font-semibold hover:underline"
         >
           {item.products.name}
         </Link>
-        
+
         <div className="text-sm text-muted-foreground">
           <p>Size: {item.size_name}</p>
           <p>Flavor: {item.flavor}</p>
-          <p>Delivery: {format(new Date(item.delivery_date), 'PPP')}</p>
+          <p>Delivery: {format(new Date(item.delivery_date), "PPP")}</p>
         </div>
-        
+
         <div className="flex items-center justify-between mt-4 gap-4">
           <div className="flex items-center border rounded-lg">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
               onClick={() => handleQuantityChange(-1)}
               disabled={isUpdating || item.quantity <= 1}
@@ -75,10 +74,10 @@ const CartItem = ({ item }: CartItemProps) => {
               <Minus size={16} />
             </Button>
             <div className="w-12 text-center font-medium">
-              {isUpdating ? '...' : item.quantity}
+              {isUpdating ? "..." : item.quantity}
             </div>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
               onClick={() => handleQuantityChange(1)}
               disabled={isUpdating}
@@ -87,10 +86,14 @@ const CartItem = ({ item }: CartItemProps) => {
               <Plus size={16} />
             </Button>
           </div>
-          
+
           <div className="flex items-center gap-8">
             <span className="font-semibold">
-              ₦{(item.quantity * item.size_price).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ₦
+              {(item.quantity * item.size_price).toLocaleString("en-NG", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </span>
             <Button
               variant="destructive"
