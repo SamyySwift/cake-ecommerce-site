@@ -140,7 +140,7 @@ const Navigation = () => {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="text-2xl md:text-3xl font-bold text-primary">
-          Fikayo's Delights
+          Sweet Delights
         </Link>
 
         {/* Desktop Navigation */}

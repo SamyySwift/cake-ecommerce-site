@@ -35,12 +35,10 @@ const AdminLayout = () => {
       <div className="flex">
         {/* Sidebar */}
         <aside
-          className={`${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } fixed md:static md:translate-x-0 z-30 bg-white shadow-lg h-screen w-64 transition-transform duration-300 ease-in-out`}
+          className={`${isSidebarOpen ? "translate-x-0" : "-translate-x-full"} fixed md:static md:translate-x-0 z-30 bg-white shadow-lg h-screen w-64 transition-transform duration-300 ease-in-out`}
         >
           <div className="p-6 border-b">
-            <h2 className="text-xl font-bold">Fikayo's Delights</h2>
+            <h2 className="text-xl font-bold">Sweet Delights</h2>
             <p className="text-sm text-gray-500">Admin Dashboard</p>
           </div>
 

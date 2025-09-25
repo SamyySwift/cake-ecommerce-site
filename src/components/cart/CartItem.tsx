@@ -74,7 +74,7 @@ const CartItem = ({ item }: CartItemProps) => {
               <Minus size={16} />
             </Button>
             <div className="w-12 text-center font-medium">
-              {isUpdating ? "..." : item.quantity}
+              {item.quantity}
             </div>
             <Button
               variant="ghost"
@@ -87,14 +87,21 @@ const CartItem = ({ item }: CartItemProps) => {
             </Button>
           </div>
 
-          <div className="flex items-center gap-8">
-            <span className="font-semibold">
+          <div className="flex items-center gap-3">
+            <span className={`font-semibold ${isUpdating ? "opacity-60 animate-pulse" : ""}`}>
               ₦
               {(item.quantity * item.size_price).toLocaleString("en-NG", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
             </span>
+            {isUpdating && (
+              // Use a subtle spinner to indicate background save
+              <svg className="h-4 w-4 animate-spin text-muted-foreground" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+              </svg>
+            )}
             <Button
               variant="destructive"
               size="icon"

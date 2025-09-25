@@ -44,20 +44,38 @@ export const useCart = () => {
         if (error) throw error;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-      toast({
-        title: "Cart updated",
-        description: "Your cart has been updated successfully"
-      });
+    onMutate: async ({ itemId, quantity }) => {
+      await queryClient.cancelQueries({ queryKey: ['cart'] });
+      const previousCart = queryClient.getQueryData<CartItem[]>(['cart']) || [];
+
+      const nextCart =
+        quantity === 0
+          ? previousCart.filter((i) => i.id !== itemId)
+          : previousCart.map((i) => (i.id === itemId ? { ...i, quantity } : i));
+
+      queryClient.setQueryData(['cart'], nextCart);
+
+      return { previousCart };
     },
-    onError: (error: any) => {
+    onError: (error: any, _variables, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(['cart'], context.previousCart);
+      }
       toast({
         title: "Error",
-        description: error.message,
-        variant: "destructive"
+        description: error.message || "Failed to update quantity",
+        variant: "destructive",
       });
-    }
+    },
+    onSuccess: () => {
+      toast({
+        title: "Cart updated",
+        description: "Your cart has been updated successfully",
+      });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
   });
 
   const removeItem = useMutation({
@@ -66,23 +84,36 @@ export const useCart = () => {
         .from('cart_items')
         .delete()
         .eq('id', itemId);
-      
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-      toast({
-        title: "Item removed",
-        description: "Item has been removed from your cart"
-      });
+    onMutate: async (itemId: string) => {
+      await queryClient.cancelQueries({ queryKey: ['cart'] });
+      const previousCart = queryClient.getQueryData<CartItem[]>(['cart']) || [];
+
+      const nextCart = previousCart.filter((i) => i.id !== itemId);
+      queryClient.setQueryData(['cart'], nextCart);
+
+      return { previousCart };
     },
-    onError: (error: any) => {
+    onError: (error: any, _variables, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData(['cart'], context.previousCart);
+      }
       toast({
         title: "Error",
-        description: error.message,
-        variant: "destructive"
+        description: error.message || "Failed to remove item",
+        variant: "destructive",
       });
-    }
+    },
+    onSuccess: () => {
+      toast({
+        title: "Item removed",
+        description: "Item has been removed from your cart",
+      });
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
   });
 
   const removeAllItems = useMutation({
