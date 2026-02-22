@@ -1,11 +1,9 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '@/data/products';
-import { Star, ShoppingBag, Heart } from 'lucide-react';
+import { ShoppingBag, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -19,87 +17,71 @@ const ProductCard = ({ product, className }: ProductCardProps) => {
     navigate(`/product/${product.id}`);
   };
 
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<Star key={i} size={16} fill="currentColor" className="text-yellow-400" />);
-    }
-
-    if (hasHalfStar) {
-      stars.push(
-        <div key="half" className="relative">
-          <Star size={16} className="text-yellow-400" />
-          <Star
-            size={16}
-            fill="currentColor"
-            className="absolute top-0 left-0 text-yellow-400 w-1/2 overflow-hidden"
-          />
-        </div>
-      );
-    }
-
-    const emptyStars = 5 - stars.length;
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(<Star key={`empty-${i}`} size={16} className="text-gray-300" />);
-    }
-
-    return stars;
-  };
-
   return (
-    <div className={cn("product-card group", className)}>
-      <div className="relative overflow-hidden">
+    <div className={cn("group flex flex-col cursor-pointer", className)} onClick={handleClick}>
+      <div className="relative overflow-hidden mb-4 bg-gray-100 aspect-[3/4]">
         {(product.bestseller || product.newArrival) && (
           <div className={cn(
-            "absolute top-2 left-2 z-10 px-2 py-1 text-xs font-semibold rounded",
-            product.bestseller ? "bg-yellow-400 text-yellow-800" : "bg-primary text-primary-foreground"
+            "absolute top-4 left-4 z-10 px-3 py-1 text-[10px] uppercase tracking-widest font-semibold bg-white text-black",
           )}>
-            {product.bestseller ? "Bestseller" : "New"}
+            {product.bestseller ? "Bestseller" : "New Arrival"}
           </div>
         )}
-        <div className="absolute top-2 right-2 z-10">
+        <div className="absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <Button
             variant="ghost"
             size="icon"
-            className="rounded-full bg-white/80 backdrop-blur-sm hover:bg-white"
+            className="rounded-full bg-white text-black hover:bg-gray-100 h-8 w-8"
             aria-label="Add to wishlist"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Add wishlist logic here
+            }}
           >
-            <Heart size={18} />
+            <Heart size={14} />
           </Button>
         </div>
         <img
           src={product.image_url || '/placeholder.svg'}
           alt={product.name}
-          className="w-full aspect-square object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-         
-          <Button 
-            className="w-full rounded-full bg-white text-foreground hover:bg-white/90 flex items-center justify-center"
-            onClick={handleClick}
-          >
-            <ShoppingBag size={16} className="mr-2" /> Add to Cart
-          </Button>
         
-         
+        {/* Hover Add to Cart Button */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+          <Button 
+            className="w-full bg-black text-white hover:bg-black/90 font-medium tracking-wide uppercase text-xs py-6 rounded-none"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
+          >
+            Explore Details
+          </Button>
         </div>
       </div>
-      <div className="p-4 cursor-pointer" onClick={handleClick}>
-        <p className="text-sm text-muted-foreground">{product.category}</p>
-        <h3 className="font-semibold text-lg mt-1">{product.name}</h3>
-        <div className="flex items-center mt-2">
-          <div className="flex">
-            {renderStars(product.rating)}
-          </div>
-          <span className="text-sm text-muted-foreground ml-2">({product.reviews})</span>
+
+      <div className="flex flex-col flex-grow">
+        <div className="flex justify-between items-start mb-1">
+          <h3 className="font-serif text-lg text-primary leading-tight">{product.name}</h3>
+          <span className="font-medium text-sm ml-4 whitespace-nowrap">
+            ${product.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
         </div>
-        <div className="mt-2 font-semibold">₦{product.price.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-        {product.sameDay && (
-          <div className="mt-2 text-sm text-green-600">Available for Same-day Delivery</div>
-        )}
+        
+        <p className="text-xs text-gray-500 uppercase tracking-widest mb-2">{product.category}</p>
+        
+        <div className="mt-auto flex items-center justify-between text-xs text-gray-500">
+          <div className="flex gap-1">
+            {product.colors?.slice(0, 3).map((color, i) => (
+              <span key={i} className="inline-block w-3 h-3 rounded-full border border-gray-300 shadow-sm" style={{ backgroundColor: color.toLowerCase().replace(' ', '') }} title={color} />
+            ))}
+            {product.colors?.length > 3 && <span className="ml-1">+{product.colors.length - 3}</span>}
+          </div>
+          {product.sameDay && (
+            <span className="text-green-600/80 uppercase tracking-wider" style={{ fontSize: '10px' }}>Express</span>
+          )}
+        </div>
       </div>
     </div>
   );

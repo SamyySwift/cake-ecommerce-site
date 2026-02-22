@@ -1,139 +1,101 @@
 import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-cake-mint py-12 md:h-[500px]">
-      <div className="container mx-auto px-4 mt-10">
-        <div className="grid grid-cols-1 lg:justify-items-end  md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* About */}
-          <div>
-            <h3 className="text-xl font-bold mb-4">Sweet Delights</h3>
-            <p className="text-muted-foreground mb-4">
-              Handcrafted cakes made with love and the finest ingredients.
-              Perfect for any occasion.
+    <footer className="w-full bg-[#0a0a0a] text-white pt-24 pb-8 overflow-hidden">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-24">
+          {/* Brand/About */}
+          <div className="lg:col-span-1">
+            <h3 className="text-xl font-serif mb-6 tracking-wide">AURA</h3>
+            <p className="text-white/50 font-light text-sm max-w-xs leading-relaxed mb-8">
+              Redefining modern luxury through sustainable practices and timeless silhouettes. Designed for the discerning individual.
             </p>
-            <div className="flex space-x-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full"
-                aria-label="Facebook"
-              >
-                <Facebook size={20} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full"
-                aria-label="Instagram"
-              >
-                <Instagram size={20} />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
-              </Button>
+            <div className="flex space-x-5">
+              <a href="#" className="text-white/50 hover:text-white transition-colors">
+                <Instagram size={18} strokeWidth={1.5} />
+                <span className="sr-only">Instagram</span>
+              </a>
+              <a href="#" className="text-white/50 hover:text-white transition-colors">
+                <Twitter size={18} strokeWidth={1.5} />
+                <span className="sr-only">Twitter</span>
+              </a>
+              <a href="#" className="text-white/50 hover:text-white transition-colors">
+                <Facebook size={18} strokeWidth={1.5} />
+                <span className="sr-only">Facebook</span>
+              </a>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Shop */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xs tracking-widest uppercase text-white/40 mb-6 font-semibold">Shop</h3>
+            <ul className="space-y-4">
               <li>
-                <Link
-                  to="/shop"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Shop All
-                </Link>
+                <Link to="/shop?category=womenswear" className="text-white/70 hover:text-white transition-colors text-sm font-light">Womenswear</Link>
               </li>
               <li>
-                <Link
-                  to="/about"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  About Us
-                </Link>
+                <Link to="/shop?category=menswear" className="text-white/70 hover:text-white transition-colors text-sm font-light">Menswear</Link>
               </li>
               <li>
-                <Link
-                  to="/faq"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  FAQ
-                </Link>
+                <Link to="/shop?category=accessories" className="text-white/70 hover:text-white transition-colors text-sm font-light">Accessories</Link>
               </li>
               <li>
-                <Link
-                  to="/contact"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Contact Us
-                </Link>
+                <Link to="/shop?filter=new" className="text-white/70 hover:text-white transition-colors text-sm font-light">New Arrivals</Link>
               </li>
             </ul>
           </div>
 
-          {/* Customer Service */}
+          {/* Client Services */}
           <div>
-            <h3 className="text-xl font-bold mb-4">Customer Service</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xs tracking-widest uppercase text-white/40 mb-6 font-semibold">Client Services</h3>
+            <ul className="space-y-4">
               <li>
-                <Link
-                  to="/delivery"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Delivery Information
-                </Link>
+                <Link to="/contact" className="text-white/70 hover:text-white transition-colors text-sm font-light">Contact Us</Link>
               </li>
               <li>
-                <Link
-                  to="/returns"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Returns & Refunds
-                </Link>
+                <Link to="/delivery" className="text-white/70 hover:text-white transition-colors text-sm font-light">Shipping & Delivery</Link>
               </li>
               <li>
-                <Link
-                  to="/terms"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Terms & Conditions
-                </Link>
+                <Link to="/returns" className="text-white/70 hover:text-white transition-colors text-sm font-light">Returns & Exchanges</Link>
+              </li>
+              <li>
+                <Link to="/faq" className="text-white/70 hover:text-white transition-colors text-sm font-light">FAQ</Link>
               </li>
             </ul>
           </div>
-
-          {/* Newsletter */}
-          {/* <div>
-            <h3 className="text-xl font-bold mb-4">Join Our Newsletter</h3>
-            <p className="text-muted-foreground mb-4">
-              Subscribe for updates on new flavors, seasonal specials, and exclusive offers.
-            </p>
-            <div className="flex flex-col space-y-2">
-              <Input
-                type="email"
-                placeholder="Your email"
-                className="rounded-full bg-white"
-              />
-              <Button className="cake-button w-full">Subscribe</Button>
-            </div>
-          </div> */}
+          
+          {/* Legal */}
+          <div>
+            <h3 className="text-xs tracking-widest uppercase text-white/40 mb-6 font-semibold">Legal</h3>
+            <ul className="space-y-4">
+              <li>
+                <Link to="/terms" className="text-white/70 hover:text-white transition-colors text-sm font-light">Terms & Conditions</Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="text-white/70 hover:text-white transition-colors text-sm font-light">Privacy Policy</Link>
+              </li>
+              <li>
+                <Link to="/accessibility" className="text-white/70 hover:text-white transition-colors text-sm font-light">Accessibility</Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div className="border-t border-muted-foreground/10 mt-12 pt-8 text-center text-muted-foreground">
-          <p>
-            &copy; {new Date().getFullYear()} Sweet Delights. All rights
-            reserved.
-          </p>
+        {/* Massive Logo */}
+        <div className="w-full flex justify-center items-center border-t border-white/10 pt-12 pb-8">
+          <h1 className="text-[15vw] leading-none font-serif text-white tracking-tighter opacity-90 select-none pointer-events-none">
+            AURA
+          </h1>
+        </div>
+
+        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-white/30 tracking-wide">
+          <p>&copy; {new Date().getFullYear()} AURA TRADEMARK. ALL RIGHTS RESERVED.</p>
+          <div className="flex gap-4 mt-4 md:mt-0">
+            <span>INDEX</span>
+            <span>2026</span>
+          </div>
         </div>
       </div>
     </footer>

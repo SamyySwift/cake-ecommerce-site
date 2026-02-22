@@ -13,7 +13,7 @@ export type Database = {
         Row: {
           created_at: string
           delivery_date: string
-          flavor: string
+          color: string
           id: string
           product_id: string
           quantity: number
@@ -25,7 +25,7 @@ export type Database = {
         Insert: {
           created_at?: string
           delivery_date: string
-          flavor: string
+          color: string
           id?: string
           product_id: string
           quantity: number
@@ -37,7 +37,7 @@ export type Database = {
         Update: {
           created_at?: string
           delivery_date?: string
-          flavor?: string
+          color?: string
           id?: string
           product_id?: string
           quantity?: number
@@ -146,7 +146,7 @@ export type Database = {
           category: string | null
           created_at: string
           description: string | null
-          flavors: string[] | null
+          colors: string[] | null
           id: string
           image_url: string | null
           name: string
@@ -163,7 +163,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
-          flavors?: string[] | null
+          colors?: string[] | null
           id?: string
           image_url?: string | null
           name: string
@@ -180,7 +180,7 @@ export type Database = {
           category?: string | null
           created_at?: string
           description?: string | null
-          flavors?: string[] | null
+          colors?: string[] | null
           id?: string
           image_url?: string | null
           name?: string

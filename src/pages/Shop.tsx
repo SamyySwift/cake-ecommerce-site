@@ -6,7 +6,8 @@ import ProductCard from '@/components/ProductCard';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useProducts, getUniqueCategories, getUniqueFlavors } from '@/hooks/useProducts';
+import { useProducts, getUniqueCategories, getUniqueColors } from '@/hooks/useProducts';
+import { motion } from 'framer-motion';
 
 const Shop = () => {
   const [searchParams] = useSearchParams();
@@ -14,19 +15,18 @@ const Shop = () => {
   const searchParam = searchParams.get('search');
 
   // Filter states
-  const [priceRange, setPriceRange] = useState([0, 200_000]);
+  const [priceRange, setPriceRange] = useState([0, 1000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     categoryParam ? [categoryParam] : []
   );
-  const [selectedFlavors, setSelectedFlavors] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 9;
 
   const { data: products = [], isLoading } = useProducts();
 
-  // Get unique categories and flavors from products
   const categories = useMemo(() => getUniqueCategories(products), [products]);
-  const flavors = useMemo(() => getUniqueFlavors(products), [products]);
+  const colors = useMemo(() => getUniqueColors(products), [products]);
 
   // Filter products
   const filteredProducts = useMemo(() => {
@@ -48,9 +48,9 @@ const Shop = () => {
       );
     }
 
-    if (selectedFlavors.length > 0) {
+    if (selectedColors.length > 0) {
       filtered = filtered.filter(product =>
-        product.flavors && product.flavors.some(flavor => selectedFlavors.includes(flavor))
+        product.colors && product.colors.some(color => selectedColors.includes(color))
       );
     }
 
@@ -59,7 +59,7 @@ const Shop = () => {
     );
 
     return filtered;
-  }, [products, selectedCategories, selectedFlavors, priceRange, searchParam]);
+  }, [products, selectedCategories, selectedColors, priceRange, searchParam]);
 
   // Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -79,64 +79,92 @@ const Shop = () => {
     );
   };
 
-  const handleFlavorChange = (flavor: string) => {
-    setSelectedFlavors(prev =>
-      prev.includes(flavor)
-        ? prev.filter(item => item !== flavor)
-        : [...prev, flavor]
+  const handleColorChange = (color: string) => {
+    setSelectedColors(prev =>
+      prev.includes(color)
+        ? prev.filter(item => item !== color)
+        : [...prev, color]
     );
   };
 
   const clearFilters = () => {
     setSelectedCategories([]);
-    setSelectedFlavors([]);
-    setPriceRange([0, 200_000]);
+    setSelectedColors([]);
+    setPriceRange([0, 1000]);
     setCurrentPage(1);
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-white selection:bg-black selection:text-white">
       <Navigation />
-      <main className="section-container">
-        <div className="flex flex-col lg:flex-row gap-8">
+      
+      {/* Page Header */}
+      <div className="pt-40 pb-16 px-6 bg-white">
+        <div className="container mx-auto">
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-5xl md:text-7xl font-serif text-primary"
+          >
+            The Collection
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-[10px] tracking-widest uppercase text-gray-500 max-w-lg mt-8"
+          >
+            Explore our meticulously curated selection of modern essentials. Designed for longevity and architectural grace.
+          </motion.p>
+        </div>
+      </div>
+
+      <main className="container mx-auto px-6 pb-32">
+        <div className="flex flex-col lg:flex-row gap-16">
           {/* Filters Sidebar */}
-          <div className="lg:w-1/4">
-            <div className="sticky top-24 space-y-8">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold">Filters</h2>
-                <Button variant="ghost" size="sm" onClick={clearFilters}>
+          <div className="lg:w-[240px] shrink-0">
+            <div className="sticky top-32 space-y-12">
+              <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+                <h2 className="text-[10px] font-bold tracking-widest uppercase text-primary">Filters</h2>
+                <button 
+                  className="text-[10px] tracking-widest uppercase text-gray-400 hover:text-primary transition-colors" 
+                  onClick={clearFilters}
+                >
                   Clear All
-                </Button>
+                </button>
               </div>
 
               {/* Price Range */}
-              <div className="space-y-4">
-                <h3 className="font-semibold">Price Range (₦)</h3>
+              <div className="space-y-6">
+                <h3 className="text-[10px] font-bold tracking-widest uppercase text-primary">Price Range</h3>
                 <Slider
                   value={priceRange}
                   onValueChange={setPriceRange}
                   min={0}
-                  max={200_000}
-                  step={500}
+                  max={1000}
+                  step={10}
+                  className="py-4"
                 />
-                <div className="flex justify-between text-sm">
-                  <span>₦{priceRange[0].toLocaleString()}</span>
-                  <span>₦{priceRange[1].toLocaleString()}</span>
+                <div className="flex justify-between text-[10px] tracking-widest font-bold text-gray-500">
+                  <span>${priceRange[0]}</span>
+                  <span>${priceRange[1]}</span>
                 </div>
               </div>
 
               {/* Categories */}
-              <div className="space-y-4">
-                <h3 className="font-semibold">Categories</h3>
-                <div className="space-y-2">
+              <div className="space-y-6">
+                <h3 className="text-[10px] font-bold tracking-widest uppercase text-primary">Categories</h3>
+                <div className="space-y-4">
                   {categories.map(category => (
-                    <div key={category} className="flex items-center space-x-2">
+                    <div key={category} className="flex items-center space-x-3 group">
                       <Checkbox
                         id={`category-${category}`}
                         checked={selectedCategories.includes(category)}
                         onCheckedChange={() => handleCategoryChange(category)}
+                        className="rounded-none border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                       />
-                      <label htmlFor={`category-${category}`} className="text-sm cursor-pointer">
+                      <label htmlFor={`category-${category}`} className="text-[10px] uppercase tracking-wider text-gray-600 cursor-pointer group-hover:text-primary transition-colors">
                         {category}
                       </label>
                     </div>
@@ -144,19 +172,20 @@ const Shop = () => {
                 </div>
               </div>
 
-              {/* Flavors */}
-              <div className="space-y-4">
-                <h3 className="font-semibold">Flavors</h3>
-                <div className="space-y-2">
-                  {flavors.map(flavor => (
-                    <div key={flavor} className="flex items-center space-x-2">
+              {/* Colors */}
+              <div className="space-y-6">
+                <h3 className="text-[10px] font-bold tracking-widest uppercase text-primary">Colors</h3>
+                <div className="space-y-4">
+                  {colors.map(color => (
+                    <div key={color} className="flex items-center space-x-3 group">
                       <Checkbox
-                        id={`flavor-${flavor}`}
-                        checked={selectedFlavors.includes(flavor)}
-                        onCheckedChange={() => handleFlavorChange(flavor)}
+                        id={`color-${color}`}
+                        checked={selectedColors.includes(color)}
+                        onCheckedChange={() => handleColorChange(color)}
+                        className="rounded-none border-gray-300 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                       />
-                      <label htmlFor={`flavor-${flavor}`} className="text-sm cursor-pointer">
-                        {flavor}
+                      <label htmlFor={`color-${color}`} className="text-[10px] uppercase tracking-wider text-gray-600 cursor-pointer group-hover:text-primary transition-colors">
+                        {color}
                       </label>
                     </div>
                   ))}
@@ -167,45 +196,49 @@ const Shop = () => {
           </div>
 
           {/* Product Grid */}
-          <div className="lg:w-3/4">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold">All Cakes</h1>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-muted-foreground">
-                  {isLoading ? 'Loading...' : `Showing ${filteredProducts.length} products`}
-                </span>
-              </div>
+          <div className="flex-1">
+            <div className="flex justify-between items-center border-b border-gray-200 pb-4 mb-10">
+              <span className="text-[10px] font-bold tracking-widest uppercase text-gray-500">
+                {isLoading ? 'Loading...' : `${filteredProducts.length} Pieces`}
+              </span>
             </div>
 
             {isLoading ? (
-              <div className="text-center py-16">
-                <p>Loading products...</p>
+              <div className="flex items-center justify-center py-32">
+                <div className="w-4 h-4 rounded-full border-2 border-primary border-t-transparent animate-spin" />
               </div>
             ) : currentProducts.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
                 {currentProducts.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16">
-                <h3 className="text-xl font-semibold">No products found</h3>
-                <p className="text-muted-foreground mt-2">
-                  Try changing your filters
+              <div className="flex flex-col items-center justify-center py-32 text-center">
+                <h3 className="text-xl font-serif text-primary mb-4">No pieces found</h3>
+                <p className="text-[10px] tracking-widest uppercase text-gray-500">
+                  Try adjusting your filters to discover more.
                 </p>
+                <Button 
+                  variant="outline" 
+                  onClick={clearFilters}
+                  className="mt-8 rounded-none border-primary text-[10px] tracking-widest uppercase font-bold hover:bg-primary hover:text-white transition-colors px-8"
+                >
+                  Clear Filters
+                </Button>
               </div>
             )}
 
             {/* Pagination */}
             {filteredProducts.length > productsPerPage && (
-              <div className="mt-12 flex justify-center items-center gap-2 flex-wrap">
+              <div className="mt-24 flex justify-center items-center gap-1 border-t border-gray-200 pt-8">
                 {currentPage > 1 && (
-                  <Button
-                    variant="outline"
+                  <button
                     onClick={() => paginate(currentPage - 1)}
+                    className="px-4 py-2 text-[10px] tracking-widest uppercase font-bold text-gray-500 hover:text-primary transition-colors"
                   >
-                    Previous
-                  </Button>
+                    Prev
+                  </button>
                 )}
 
                 {/* Page Numbers */}
@@ -230,31 +263,35 @@ const Shop = () => {
                   return pageNumbers.map((number, index) => {
                     if (number === '...') {
                       return (
-                        <span key={`ellipsis-${index}`} className="px-2">
+                        <span key={`ellipsis-${index}`} className="px-3 text-gray-400">
                           ...
                         </span>
                       );
                     }
 
                     return (
-                      <Button
+                      <button
                         key={number}
-                        variant={number === currentPage ? "default" : "outline"}
                         onClick={() => paginate(number as number)}
+                        className={`w-10 h-10 flex items-center justify-center text-[10px] tracking-widest font-bold transition-colors ${
+                          number === currentPage 
+                            ? 'bg-primary text-white' 
+                            : 'text-gray-500 hover:text-primary hover:bg-gray-50'
+                        }`}
                       >
                         {number}
-                      </Button>
+                      </button>
                     );
                   });
                 })()}
 
                 {indexOfLastProduct < filteredProducts.length && (
-                  <Button
-                    variant="outline"
+                  <button
                     onClick={() => paginate(currentPage + 1)}
+                    className="px-4 py-2 text-[10px] tracking-widest uppercase font-bold text-gray-500 hover:text-primary transition-colors"
                   >
                     Next
-                  </Button>
+                  </button>
                 )}
               </div>
             )}
@@ -263,7 +300,7 @@ const Shop = () => {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

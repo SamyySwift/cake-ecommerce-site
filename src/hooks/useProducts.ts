@@ -14,7 +14,7 @@ const normalizeProduct = (product: ProductRow): Product => {
     price: product.price,
     image_url: product.image_url,
     category: product.category || "",
-    flavors: product.flavors || [],
+    colors: product.colors || [],
     sizes: product.sizes as { name: string; price: number }[] || [],
     rating: product.rating || 0,
     reviews: product.reviews || 0,
@@ -72,7 +72,7 @@ export const getUniqueCategories = (products: Product[]): string[] => {
   return Array.from(new Set(products.filter(p => p.category).map(p => p.category)));
 };
 
-export const getUniqueFlavors = (products: Product[]): string[] => {
-  const allFlavors = products.flatMap(product => product.flavors || []);
-  return Array.from(new Set(allFlavors));
+export const getUniqueColors = (products: Product[]): string[] => {
+  const allColors = products.flatMap(product => product.colors || []);
+  return Array.from(new Set(allColors));
 };

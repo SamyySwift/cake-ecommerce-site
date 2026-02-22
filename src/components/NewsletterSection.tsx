@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
+import { motion } from 'framer-motion';
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState('');
@@ -27,44 +27,51 @@ const NewsletterSection = () => {
       setIsLoading(false);
       setEmail('');
       toast({
-        title: "Success!",
-        description: "You've been subscribed to our newsletter.",
+        title: "Welcome to AURA",
+        description: "You've successfully subscribed to our curated updates.",
       });
     }, 1000);
   };
 
   return (
-    <section className="section-container">
-      <div className="bg-cake-yellow rounded-3xl p-8 md:p-12">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Join Our Sweet Community</h2>
-          <p className="text-lg mb-8 text-muted-foreground">
-            Subscribe to our newsletter for exclusive offers, recipes, and cake decorating tips. 
-            Be the first to know about seasonal specials!
+    <section className="py-24 md:py-32 bg-black text-white">
+      <div className="container mx-auto px-6">
+        <motion.div 
+          className="max-w-2xl mx-auto text-center"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+        >
+          <h2 className="text-sm tracking-widest uppercase text-white/50 mb-6">The Insider</h2>
+          <h3 className="text-4xl md:text-5xl font-serif text-white mb-6">Join The List</h3>
+          <p className="text-lg text-white/70 font-light mb-12">
+            Subscribe for exclusive access to pre-launches, private sales, and curated editorial content.
           </p>
           
-          <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4 max-w-lg mx-auto">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-0 max-w-lg mx-auto border-b border-white/30 focus-within:border-white transition-colors">
             <Input
               type="email"
-              placeholder="Your email address"
+              placeholder="Enter your email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-full bg-white"
+              className="bg-transparent border-none rounded-none text-white placeholder:text-white/30 px-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-14 text-lg"
               required
             />
             <Button 
               type="submit" 
-              className="cake-button md:w-auto"
+              variant="ghost"
+              className="text-sm uppercase tracking-widest hover:bg-transparent hover:text-white/70 h-14 px-0 sm:pl-6 rounded-none justify-start sm:justify-center"
               disabled={isLoading}
             >
-              {isLoading ? 'Subscribing...' : 'Subscribe'}
+              {isLoading ? 'Joining...' : 'Subscribe'}
             </Button>
           </form>
           
-          <p className="text-xs mt-4 text-muted-foreground">
-            By subscribing, you agree to our Privacy Policy and consent to receive updates from our company.
+          <p className="text-xs mt-8 text-white/40 tracking-wide">
+            By subscribing, you agree to our Privacy Policy and Terms of Service.
           </p>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -13,8 +13,8 @@ interface ProductControlsProps {
   product: Product;
   selectedSize: { name: string; price: number };
   setSelectedSize: (size: { name: string; price: number }) => void;
-  selectedFlavor: string;
-  setSelectedFlavor: (flavor: string) => void;
+  selectedColor: string;
+  setSelectedColor: (color: string) => void;
   quantity: number;
   setQuantity: (quantity: number) => void;
   date: Date | undefined;
@@ -25,8 +25,8 @@ const ProductControls = ({
   product,
   selectedSize,
   setSelectedSize,
-  selectedFlavor,
-  setSelectedFlavor,
+  selectedColor,
+  setSelectedColor,
   quantity,
   setQuantity,
   date,
@@ -60,18 +60,18 @@ const ProductControls = ({
       </div>
       
       <div>
-        <label className="block text-sm font-medium mb-2">Flavor</label>
+        <label className="block text-sm font-medium mb-2">Color</label>
         <Select 
-          value={selectedFlavor}
-          onValueChange={setSelectedFlavor}
+          value={selectedColor}
+          onValueChange={setSelectedColor}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select a flavor" />
+            <SelectValue placeholder="Select a color" />
           </SelectTrigger>
           <SelectContent>
-            {product.flavors.map((flavor) => (
-              <SelectItem key={flavor} value={flavor}>
-                {flavor}
+            {product.colors.map((color) => (
+              <SelectItem key={color} value={color}>
+                {color}
               </SelectItem>
             ))}
           </SelectContent>
@@ -141,7 +141,7 @@ const ProductControls = ({
       <AddToCartButton
         productId={product.id.toString()}
         selectedSize={selectedSize}
-        selectedFlavor={selectedFlavor}
+        selectedColor={selectedColor}
         quantity={quantity}
         date={date}
         disabled={!date}

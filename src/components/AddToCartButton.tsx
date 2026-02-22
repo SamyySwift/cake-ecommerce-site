@@ -9,7 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 interface AddToCartButtonProps {
   productId: string;
   selectedSize: { name: string; price: number };
-  selectedFlavor: string;
+  selectedColor: string;
   quantity: number;
   date?: Date;
   disabled?: boolean;
@@ -18,7 +18,7 @@ interface AddToCartButtonProps {
 export const AddToCartButton = ({
   productId,
   selectedSize,
-  selectedFlavor,
+  selectedColor,
   quantity,
   date,
   disabled
@@ -58,7 +58,7 @@ export const AddToCartButton = ({
           quantity: quantity,
           size_name: selectedSize.name,
           size_price: selectedSize.price,
-          flavor: selectedFlavor,
+          color: selectedColor,
           delivery_date: date.toISOString()
         });
 

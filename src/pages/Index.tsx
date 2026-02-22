@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import HeroSection from '@/components/HeroSection';
@@ -17,7 +16,7 @@ const Index = () => {
   const newArrivals = products.filter(product => product.newArrival);
 
   return (
-    <>
+    <div className="bg-white">
       <Navigation />
       <main>
         <HeroSection />
@@ -30,8 +29,8 @@ const Index = () => {
           <CategorySection />
           
           {isLoading ? (
-            <div className="container mx-auto py-16 text-center">
-              <p>Loading products...</p>
+            <div className="container mx-auto py-32 text-center text-gray-500 tracking-widest uppercase text-sm">
+              <p>Curating Collections...</p>
             </div>
           ) : (
             <>
@@ -51,35 +50,61 @@ const Index = () => {
           
           <TestimonialSection />
           
-          <div className="bg-white py-16">
-            <div className="container mx-auto px-4 max-w-4xl text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">We Bake With Love</h2>
-              <p className="text-lg mb-8 text-muted-foreground">
-                Our cakes are made from scratch using only the finest ingredients. From birthdays to weddings, 
-                we create custom cakes that taste as amazing as they look. Every cake is handcrafted with care and attention to detail.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="p-6 rounded-xl bg-cake-mint/50">
-                  <h3 className="text-xl font-semibold mb-2">Premium Ingredients</h3>
-                  <p className="text-muted-foreground">We use only the finest, freshest ingredients in all our cakes.</p>
-                </div>
-                <div className="p-6 rounded-xl bg-cake-peach/50">
-                  <h3 className="text-xl font-semibold mb-2">Handcrafted</h3>
-                  <p className="text-muted-foreground">Each cake is lovingly made by hand with attention to detail.</p>
-                </div>
-                <div className="p-6 rounded-xl bg-cake-purple/50">
-                  <h3 className="text-xl font-semibold mb-2">Same Day Delivery</h3>
-                  <p className="text-muted-foreground">Many of our cakes are available for same-day delivery.</p>
-                </div>
+          <section className="py-24 md:py-32 bg-[#fafafa]">
+            <div className="container mx-auto px-6 max-w-5xl">
+              <motion.div 
+                className="text-center mb-16 md:mb-24"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8 }}
+              >
+                <h2 className="text-sm tracking-widest uppercase text-gray-500 mb-6">Our Philosophy</h2>
+                <h3 className="text-4xl md:text-5xl lg:text-6xl font-serif text-primary leading-tight mb-8">
+                  The Art of <br className="hidden md:block" /> Modern Tailoring
+                </h3>
+                <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto font-light leading-relaxed">
+                  We believe that true luxury lies in the details. From ethically sourced fabrics to our meticulous construction processes, every garment is designed to empower and endure. 
+                </p>
+              </motion.div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  {
+                    title: "Premium Materials",
+                    desc: "Sourced globally from sustainable mills, ensuring unmatched quality and longevity.",
+                  },
+                  {
+                    title: "Ethical Craft",
+                    desc: "Hand-finished by artisans who are paid fair wages in safe, modern facilities.",
+                  },
+                  {
+                    title: "Timeless Design",
+                    desc: "Silhouettes designed to transcend seasonal trends, forming the foundation of your wardrobe.",
+                  }
+                ].map((feature, idx) => (
+                  <motion.div 
+                    key={idx}
+                    className="p-8 md:p-10 border border-gray-100 bg-white hover:shadow-xl transition-shadow duration-500"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-100px" }}
+                    transition={{ duration: 0.8, delay: idx * 0.2 }}
+                  >
+                    <span className="text-xs font-bold font-serif text-gray-300 block mb-4">0{idx + 1}</span>
+                    <h4 className="text-xl font-serif mb-4">{feature.title}</h4>
+                    <p className="text-sm text-gray-500 leading-relaxed font-light">{feature.desc}</p>
+                  </motion.div>
+                ))}
               </div>
             </div>
-          </div>
+          </section>
           
           <NewsletterSection />
         </motion.div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

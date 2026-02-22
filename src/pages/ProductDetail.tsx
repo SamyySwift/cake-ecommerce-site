@@ -21,7 +21,7 @@ const ProductDetail = () => {
   
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<{ name: string; price: number }>({ name: "", price: 0 });
-  const [selectedFlavor, setSelectedFlavor] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string>("");
   const [selectedImage, setSelectedImage] = useState(0);
   const [date, setDate] = useState<Date | undefined>(undefined);
 
@@ -30,8 +30,8 @@ const ProductDetail = () => {
       // Ensure we're setting a proper size object
       setSelectedSize(product.sizes[0]);
       
-      if (product.flavors && product.flavors.length > 0) {
-        setSelectedFlavor(product.flavors[0]);
+      if (product.colors && product.colors.length > 0) {
+        setSelectedColor(product.colors[0]);
       }
     }
   }, [product]);
@@ -109,7 +109,7 @@ const ProductDetail = () => {
             <ProductRating rating={product.rating || 0} reviews={product.reviews || 0} />
             
             <p className="text-2xl font-semibold mb-4">
-              ₦{selectedSize.price.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ${selectedSize.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
             
             <p className="text-muted-foreground mb-8">
@@ -120,8 +120,8 @@ const ProductDetail = () => {
               product={product}
               selectedSize={selectedSize}
               setSelectedSize={setSelectedSize}
-              selectedFlavor={selectedFlavor}
-              setSelectedFlavor={setSelectedFlavor}
+              selectedColor={selectedColor}
+              setSelectedColor={setSelectedColor}
               quantity={quantity}
               setQuantity={setQuantity}
               date={date}

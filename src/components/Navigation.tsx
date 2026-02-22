@@ -1,23 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { ShoppingBag, User, Search, Menu, X, LogOut } from "lucide-react";
+import { User, Search, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { Input } from "@/components/ui/input";
+import { CartDrawer } from "@/components/cart/CartDrawer";
 
 const Navigation = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cartItemsCount, setCartItemsCount] = useState(0);
-  const [isAdmin, setIsAdmin] = useState(false); // <-- NEW
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const location = useLocation();
 
-  console.log(user);
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => {
     if (user) {
       fetchCartItems();
@@ -135,286 +145,221 @@ const Navigation = () => {
     };
   }, [showSearch]);
 
+  const textColorClass = scrolled ? "text-primary" : (location.pathname === '/' ? "text-white" : "text-primary");
+  const isHomePage = location.pathname === '/';
+
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md shadow-sm">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="text-2xl md:text-3xl font-bold text-primary">
-          Sweet Delights
-        </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <Link
-            to="/"
-            className={`font-medium hover:text-primary transition-colors relative ${
-              isActive("/") ? "text-primary" : ""
-            }`}
-          >
-            Home
-            {isActive("/") && (
-              <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>
-            )}
-          </Link>
-          <Link
-            to="/shop"
-            className={`font-medium hover:text-primary transition-colors relative ${
-              isActive("/shop") ? "text-primary" : ""
-            }`}
-          >
-            Shop
-            {isActive("/shop") && (
-              <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>
-            )}
-          </Link>
-          <Link
-            to="/custom-order"
-            className={`font-medium hover:text-primary transition-colors relative ${
-              isActive("/custom-order") ? "text-primary" : ""
-            }`}
-          >
-            Custom Order
-            {isActive("/custom-order") && (
-              <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>
-            )}
-          </Link>
-          {user && (
-            <Link
-              to="/orders"
-              className={`font-medium hover:text-primary transition-colors relative ${
-                isActive("/orders") ? "text-primary" : ""
-              }`}
-            >
-              My Orders
-              {isActive("/orders") && (
-                <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>
-              )}
-            </Link>
-          )}
-          {isAdmin && (
-            <Link
-              to="/admin"
-              className={`font-medium hover:text-primary transition-colors relative ${
-                location.pathname.startsWith("/admin") ? "text-primary" : ""
-              }`}
-            >
-              Admin Panel
-              {location.pathname.startsWith("/admin") && (
-                <span className="absolute bottom-[-2px] left-1/2 transform -translate-x-1/2 w-[30px] h-0.5 bg-primary rounded-full"></span>
-              )}
-            </Link>
-          )}
-        </nav>
-
-        {/* Desktop Icons */}
-        <div className="hidden md:flex items-center space-x-4">
-          {showSearch ? (
-            <form onSubmit={handleSearch} className="relative">
-              <Input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search products..."
-                className="w-[200px] md:w-[300px]"
-                autoFocus
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2"
-                onClick={() => {
-                  setShowSearch(false);
-                  setSearchQuery("");
-                }}
-              >
-                <X size={16} />
-              </Button>
-            </form>
-          ) : (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowSearch(true)}
-              aria-label="Search"
-            >
-              <Search size={20} />
-            </Button>
-          )}
-          {user ? (
-            <>
-              <Link to="/cart" className="relative">
-                <Button variant="ghost" size="icon" aria-label="Cart">
-                  <ShoppingBag size={20} />
-                  {cartItemsCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {cartItemsCount}
-                    </span>
-                  )}
-                </Button>
-              </Link>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                aria-label="Logout"
-              >
-                <LogOut size={20} />
-              </Button>
-            </>
-          ) : (
-            <Link to="/auth">
-              <Button variant="ghost" size="icon" aria-label="Account">
-                <User size={20} />
-              </Button>
-            </Link>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <div className="flex md:hidden items-center space-x-4">
-          {user && (
-            <Link to="/cart" className="relative">
-              <Button variant="ghost" size="icon" aria-label="Cart">
-                <ShoppingBag size={20} />
-                {cartItemsCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartItemsCount}
-                  </span>
-                )}
-              </Button>
-            </Link>
-          )}
+    <header 
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        scrolled 
+          ? "bg-white/90 backdrop-blur-md shadow-sm py-4 border-b border-gray-100" 
+          : isHomePage ? "bg-transparent py-6" : "bg-white py-6 border-b border-gray-100"
+      }`}
+    >
+      <div className="container mx-auto px-6 flex items-center justify-between">
+        
+        {/* Mobile Menu Button - Left */}
+        <div className="flex md:hidden items-center">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleMobileMenu}
             aria-label="Menu"
+            className={`${textColorClass} hover:bg-transparent`}
           >
-            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {isMobileMenuOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
           </Button>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-background border-t animate-fade-in">
-          <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
+        {/* Desktop Navigation - Left */}
+        <nav className="hidden md:flex items-center space-x-8 flex-1">
+          <Link
+            to="/shop"
+            className={`text-sm tracking-wide uppercase font-medium hover:opacity-70 transition-opacity ${textColorClass}`}
+          >
+            Shop
+          </Link>
+          <Link
+            to="/about"
+            className={`text-sm tracking-wide uppercase font-medium hover:opacity-70 transition-opacity ${textColorClass}`}
+          >
+            Collections
+          </Link>
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className={`text-sm tracking-wide uppercase font-medium hover:opacity-70 transition-opacity ${textColorClass}`}
+            >
+              Admin
+            </Link>
+          )}
+        </nav>
+
+        {/* Logo - Center */}
+        <Link 
+          to="/" 
+          className={`text-2xl md:text-3xl font-serif tracking-widest uppercase flex-1 text-center font-bold ${textColorClass}`}
+        >
+          AURA
+        </Link>
+
+        {/* Desktop Icons - Right */}
+        <div className="hidden md:flex items-center justify-end space-x-6 flex-1">
+          <AnimatePresence>
             {showSearch ? (
-              <form onSubmit={handleSearch} className="relative mb-4">
+              <motion.form 
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: "auto", opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                onSubmit={handleSearch} 
+                className="relative flex items-center"
+              >
                 <Input
                   type="search"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products..."
-                  className="w-full"
+                  placeholder="Search..."
+                  className={`w-[200px] border-none bg-transparent ${textColorClass} placeholder:text-current/50 focus-visible:ring-0 focus-visible:ring-offset-0`}
                   autoFocus
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                  className={`${textColorClass} hover:bg-transparent ml-2`}
                   onClick={() => {
                     setShowSearch(false);
                     setSearchQuery("");
                   }}
                 >
-                  <X size={16} />
+                  <X size={18} strokeWidth={1.5} />
                 </Button>
-              </form>
+              </motion.form>
             ) : (
-              <button
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => setShowSearch(true)}
-                className="flex items-center py-2"
+                aria-label="Search"
+                className={`${textColorClass} hover:bg-transparent -mr-2`}
               >
-                <Search size={20} className="mr-2" />
-                <span>Search</span>
-              </button>
+                <Search size={20} strokeWidth={1.5} />
+              </Button>
             )}
-            <Link
-              to="/"
-              className={`font-medium py-2 hover:text-primary transition-colors relative ${
-                isActive("/") ? "text-primary" : ""
-              }`}
-              onClick={toggleMobileMenu}
-            >
-              Home
-              {isActive("/") && (
-                <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-              )}
-            </Link>
-            <Link
-              to="/shop"
-              className={`font-medium py-2 hover:text-primary transition-colors relative ${
-                isActive("/shop") ? "text-primary" : ""
-              }`}
-              onClick={toggleMobileMenu}
-            >
-              Shop
-              {isActive("/shop") && (
-                <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-              )}
-            </Link>
-            {user && (
-              <Link
-                to="/orders"
-                className={`font-medium py-2 hover:text-primary transition-colors relative ${
-                  isActive("/orders") ? "text-primary" : ""
-                }`}
-                onClick={toggleMobileMenu}
-              >
-                My Orders
-                {isActive("/orders") && (
-                  <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-                )}
-              </Link>
-            )}
-            {isAdmin && (
-              <Link
-                to="/admin/dashboard"
-                className={`font-medium py-2 hover:text-primary transition-colors relative ${
-                  location.pathname.startsWith("/admin") ? "text-primary" : ""
-                }`}
-                onClick={toggleMobileMenu}
-              >
-                Admin Panel
-                {location.pathname.startsWith("/admin") && (
-                  <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-                )}
-              </Link>
-            )}
-            <Link
-              to="/custom-order"
-              className={`font-medium py-2 hover:text-primary transition-colors relative ${
-                isActive("/custom-order") ? "text-primary" : ""
-              }`}
-              onClick={toggleMobileMenu}
-            >
-              Custom Order
-              {isActive("/custom-order") && (
-                <span className="absolute left-0 bottom-0 w-16 h-0.5 bg-primary rounded-full"></span>
-              )}
-            </Link>
+          </AnimatePresence>
 
-            {user ? (
-              <button onClick={handleLogout} className="flex items-center py-2">
-                <LogOut size={20} className="mr-2" />
-                <span>Logout</span>
-              </button>
-            ) : (
-              <Link
-                to="/auth"
-                className="flex items-center py-2"
-                onClick={toggleMobileMenu}
-              >
-                <User size={20} className="mr-2" />
-                <span>Sign In</span>
-              </Link>
-            )}
-          </div>
+          {user ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleLogout}
+              aria-label="Logout"
+              className={`${textColorClass} hover:bg-transparent`}
+            >
+              <LogOut size={20} strokeWidth={1.5} />
+            </Button>
+          ) : (
+            <Link to="/auth">
+              <Button variant="ghost" size="icon" aria-label="Account" className={`${textColorClass} hover:bg-transparent`}>
+                <User size={20} strokeWidth={1.5} />
+              </Button>
+            </Link>
+          )}
+
+          <CartDrawer className={textColorClass} />
         </div>
-      )}
+
+        {/* Mobile Cart Icon - Right */}
+        <div className="flex md:hidden items-center justify-end flex-1">
+          <CartDrawer className={textColorClass} />
+        </div>
+      </div>
+
+      {/* Mobile Menu Fullscreen Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="md:hidden fixed inset-0 top-[72px] bg-white z-40 h-screen overflow-y-auto"
+          >
+            <div className="flex flex-col px-6 py-8 space-y-8">
+              <form onSubmit={handleSearch} className="relative w-full border-b border-gray-200 pb-2">
+                <Search size={20} className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search AURA..."
+                  className="w-full pl-8 border-none bg-transparent text-lg focus-visible:ring-0 focus-visible:ring-offset-0 px-0"
+                  autoFocus={false}
+                />
+              </form>
+
+              <div className="flex flex-col space-y-6">
+                <Link
+                  to="/"
+                  className="text-3xl font-serif text-primary"
+                  onClick={toggleMobileMenu}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/shop"
+                  className="text-3xl font-serif text-primary"
+                  onClick={toggleMobileMenu}
+                >
+                  Shop
+                </Link>
+                <Link
+                  to="/about"
+                  className="text-3xl font-serif text-primary"
+                  onClick={toggleMobileMenu}
+                >
+                  Collections
+                </Link>
+                {user && (
+                  <Link
+                    to="/orders"
+                    className="text-3xl font-serif text-primary"
+                    onClick={toggleMobileMenu}
+                  >
+                    My Orders
+                  </Link>
+                )}
+                {isAdmin && (
+                  <Link
+                    to="/admin/dashboard"
+                    className="text-3xl font-serif text-primary"
+                    onClick={toggleMobileMenu}
+                  >
+                    Admin Panel
+                  </Link>
+                )}
+              </div>
+
+              <div className="pt-8 border-t border-gray-100 flex flex-col space-y-4">
+                {user ? (
+                  <button onClick={handleLogout} className="flex items-center text-lg text-gray-500 hover:text-primary transition-colors">
+                    <LogOut size={20} className="mr-3" />
+                    <span>Logout</span>
+                  </button>
+                ) : (
+                  <Link
+                    to="/auth"
+                    className="flex items-center text-lg text-gray-500 hover:text-primary transition-colors"
+                    onClick={toggleMobileMenu}
+                  >
+                    <User size={20} className="mr-3" />
+                    <span>Sign In</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };

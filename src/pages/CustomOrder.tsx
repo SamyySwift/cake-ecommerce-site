@@ -35,19 +35,19 @@ const CustomOrder = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
-  const [selectedFlavor, setSelectedFlavor] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
   const [imageUploaded, setImageUploaded] = useState(false);
   
-  // Available cake flavors
-  const flavors = [
-    "Chocolate",
-    "Vanilla",
-    "Red Velvet",
-    "Carrot",
-    "Lemon",
-    "Strawberry",
-    "Coconut",
-    "Coffee"
+  // Available piece colors
+  const colors = [
+    "Jet Black",
+    "Navy Blue",
+    "Heather Grey",
+    "Bone",
+    "Camel",
+    "Olive",
+    "Charcoal",
+    "Burgundy"
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -59,7 +59,7 @@ const CustomOrder = () => {
       setIsSubmitting(false);
       toast({
         title: "Custom Order Request Sent!",
-        description: "We've received your custom cake request. Our team will contact you shortly.",
+        description: "We've received your custom piece request. Our team will contact you shortly.",
       });
       // Would redirect to confirmation page after Supabase integration
     }, 1500);
@@ -87,9 +87,9 @@ const CustomOrder = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Custom Cake Order</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">Custom Piece Order</h1>
           <p className="text-muted-foreground mb-8">
-            Tell us about your dream cake, and we'll make it come to life!
+            Tell us about your dream custom piece, and our tailors will make it come to life!
           </p>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -112,15 +112,15 @@ const CustomOrder = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Cake Flavor</Label>
-                  <Select value={selectedFlavor} onValueChange={setSelectedFlavor} required>
+                  <Label>Preferred Color</Label>
+                  <Select value={selectedColor} onValueChange={setSelectedColor} required>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a flavor" />
+                      <SelectValue placeholder="Select a color" />
                     </SelectTrigger>
                     <SelectContent>
-                      {flavors.map((flavor) => (
-                        <SelectItem key={flavor} value={flavor}>
-                          {flavor}
+                      {colors.map((color) => (
+                        <SelectItem key={color} value={color}>
+                          {color}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -158,34 +158,34 @@ const CustomOrder = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="size">Cake Size</Label>
+                  <Label htmlFor="size">Size Concept</Label>
                   <Select required>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a size" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="6inch">6" Round (serves 8)</SelectItem>
-                      <SelectItem value="8inch">8" Round (serves 12-16)</SelectItem>
-                      <SelectItem value="10inch">10" Round (serves 20-24)</SelectItem>
-                      <SelectItem value="sheet">Quarter Sheet (serves 20-25)</SelectItem>
-                      <SelectItem value="custom">Custom Size</SelectItem>
+                      <SelectItem value="slim">Slim Fit</SelectItem>
+                      <SelectItem value="regular">Regular Fit</SelectItem>
+                      <SelectItem value="relaxed">Relaxed Fit</SelectItem>
+                      <SelectItem value="oversized">Oversized</SelectItem>
+                      <SelectItem value="custom">Custom Measurements</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="message">Cake Message</Label>
+                  <Label htmlFor="message">Fabric Preference</Label>
                   <Input
                     id="message"
-                    placeholder="Text to be written on the cake (if any)"
+                    placeholder="Cotton, Silk, Linen, Wool, etc."
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Cake Description</Label>
+                  <Label htmlFor="description">Piece Description</Label>
                   <Textarea
                     id="description"
-                    placeholder="Describe your ideal cake including design, colors, and any special requirements"
+                    placeholder="Describe your ideal piece including design layout and any special requirements"
                     className="min-h-32"
                     required
                   />
@@ -224,9 +224,9 @@ const CustomOrder = () => {
                   <Button
                     type="submit"
                     className="w-full py-6 text-lg"
-                    disabled={isSubmitting || !date || !selectedFlavor}
+                    disabled={isSubmitting || !date || !selectedColor}
                   >
-                    {isSubmitting ? "Submitting..." : "Submit Custom Cake Request"}
+                    {isSubmitting ? "Submitting..." : "Submit Custom Piece Request"}
                   </Button>
                   <p className="text-center text-sm text-muted-foreground mt-4">
                     We'll contact you within 24 hours to discuss your custom order
@@ -238,10 +238,10 @@ const CustomOrder = () => {
             {/* Information Panel */}
             <div className="bg-muted/30 rounded-xl p-8 space-y-6">
               <div>
-                <h2 className="text-xl font-bold mb-4">Custom Cake Information</h2>
+                <h2 className="text-xl font-bold mb-4">Custom Piece Information</h2>
                 <p className="text-muted-foreground">
-                  Our skilled bakers can create the perfect cake for any occasion. From wedding cakes to 
-                  birthday surprises, we'll work with you to design something unique.
+                  Our skilled tailors can create the perfect piece for any occasion. From bespoke suits to 
+                  casual wear, we'll work with you to design something unique.
                 </p>
               </div>
               
@@ -270,26 +270,26 @@ const CustomOrder = () => {
                     <div className="mt-0.5 size-5 rounded-full bg-primary/20 flex items-center justify-center text-primary">
                       <Check size={12} />
                     </div>
-                    <span>Fresh baking starts only after order confirmation</span>
+                    <span>Tailoring starts only after measurements confirmation</span>
                   </li>
                 </ul>
               </div>
               
               <div className="space-y-4">
-                <h3 className="font-semibold">Popular Custom Cake Types</h3>
+                <h3 className="font-semibold">Popular Custom Categories</h3>
                 <div className="grid grid-cols-2 gap-2">
-                  {["Wedding", "Birthday", "Anniversary", "Graduation", "Baby Shower", "Corporate"].map((type) => (
+                  {["Bespsoke Suits", "Dresses", "Outerwear", "Trousers", "Shirts", "Jackets"].map((type) => (
                     <div key={type} className="bg-white rounded-lg p-3 shadow-sm text-center">
-                      {type} Cakes
+                      {type}
                     </div>
                   ))}
                 </div>
               </div>
               
               <div className="bg-primary/10 rounded-lg p-4 mt-6">
-                <h3 className="font-medium mb-2">Need Urgent Custom Cake?</h3>
+                <h3 className="font-medium mb-2">Need Urgent Custom Piece?</h3>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Call our rush order line for same-week custom cake availability
+                  Call our rush order line for same-week custom piece availability
                 </p>
                 <Button variant="outline" className="w-full" onClick={() => navigate('/contact')}>
                   Contact Us
